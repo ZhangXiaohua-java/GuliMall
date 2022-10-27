@@ -1,0 +1,8 @@
+server:
+  port: 8000
+
+spring:
+  datasource:
+    username: root
+    password: root
+    url: jdbc:mysql://192.168.56.3:3306/gulimall_sms?useUnicode=true&useSSL=false&serverTimezone=GMT%2B8
