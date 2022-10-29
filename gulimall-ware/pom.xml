@@ -7,6 +7,7 @@
         <artifactId>GuliMall</artifactId>
         <groupId>element.io</groupId>
         <version>0.1</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <groupId>element.io</groupId>
@@ -40,6 +41,18 @@
             <groupId>element.io</groupId>
             <artifactId>gulimall-common</artifactId>
             <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-bootstrap</artifactId>
         </dependency>
     </dependencies>
 

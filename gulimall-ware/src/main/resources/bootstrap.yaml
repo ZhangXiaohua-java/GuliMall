@@ -1,0 +1,20 @@
+server:
+  port: 11000
+
+spring:
+  datasource:
+    username: root
+    password: root
+    url: jdbc:mysql://192.168.56.3:3306/gulimall_wms?useUnicode=true&useSSL=false&serverTimezone=GMT%2B8
+
+  application:
+    name: gulimall-ware
+  cloud:
+    nacos:
+      server-addr: 192.168.56.2:8848
+      username: nacos
+      password: nacos
+      config:
+        namespace: 4c2d7013-05c4-4037-8aa4-0cfa8d964c64
+        group: JAVA_GROUP
+        file-extension: yaml

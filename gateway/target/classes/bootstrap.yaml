@@ -1,0 +1,18 @@
+server:
+  port: 80
+spring:
+  application:
+    name: gateway
+  cloud:
+    nacos:
+      server-addr: 192.168.56.2:8848
+      username: nacos
+      password: nacos
+      config:
+        namespace: 4c2d7013-05c4-4037-8aa4-0cfa8d964c64
+        group: JAVA_GROUP
+        file-extension: yaml
+
+
+
+

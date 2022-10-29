@@ -9,6 +9,7 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>gateway</module>
         <module>gulimall-common</module>
         <module>gulimall-coupon</module>
         <module>gulimall-member</module>
@@ -17,12 +18,23 @@
         <module>gulimall-ware</module>
     </modules>
 
+    <dependencies>
+
+    </dependencies>
+
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-starter-bootstrap</artifactId>
+                <version>3.1.4</version>
+            </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-parent</artifactId>
                 <version>2.2.6.RELEASE</version>
+                <scope>import</scope>
+                <type>pom</type>
             </dependency>
             <dependency>
                 <groupId>com.baomidou</groupId>
@@ -30,21 +42,21 @@
                 <version>3.3.1</version>
             </dependency>
             <dependency>
-                <groupId>mysql</groupId>
-                <artifactId>mysql-connector-java</artifactId>
-                <version>8.0.30</version>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>Hoxton.SR9</version>
+                <scope>import</scope>
+                <type>pom</type>
             </dependency>
             <dependency>
-                <groupId>org.projectlombok</groupId>
-                <artifactId>lombok</artifactId>
-                <version>1.18.24</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-web</artifactId>
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>spring-cloud-alibaba-dependencies</artifactId>
                 <version>2.2.6.RELEASE</version>
+                <scope>import</scope>
+                <type>pom</type>
             </dependency>
         </dependencies>
     </dependencyManagement>
+
 
 </project>

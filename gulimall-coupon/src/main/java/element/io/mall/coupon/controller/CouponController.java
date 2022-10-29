@@ -24,6 +24,19 @@ public class CouponController {
 	@Autowired
 	private CouponService couponService;
 
+
+	/**
+	 * 测试方法
+	 *
+	 * @return
+	 */
+	@GetMapping("/coupons")
+	public R queryCoupons() {
+		CouponEntity coupon = new CouponEntity();
+		coupon.setCouponName("满100-30优惠");
+		return R.ok().put("coupon", coupon);
+	}
+
 	/**
 	 * 列表
 	 */

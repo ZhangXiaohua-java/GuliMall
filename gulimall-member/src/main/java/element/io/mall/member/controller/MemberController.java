@@ -1,19 +1,16 @@
 package element.io.mall.member.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import element.io.mall.common.util.R;
+import element.io.mall.common.service.CouponRemoteClient;
 import element.io.mall.common.util.PageUtils;
+import element.io.mall.common.util.R;
 import element.io.mall.member.entity.MemberEntity;
 import element.io.mall.member.service.MemberService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
+import java.util.Arrays;
+import java.util.Map;
 
 
 /**
@@ -26,12 +23,18 @@ import element.io.mall.member.service.MemberService;
 @RestController
 @RequestMapping("member/member")
 public class MemberController {
+
 	@Autowired
 	private MemberService memberService;
 
+
+	@Resource
+	private CouponRemoteClient couponRemoteClient;
+
+
 	/**
-     * 列表
-     */
+	 * 列表
+	 */
 	@RequestMapping("/list")
 	//@RequiresPermissions("member:member:list")
 	public R list(@RequestParam Map<String, Object> params) {
@@ -42,47 +45,58 @@ public class MemberController {
 
 
 	/**
-     * 信息
-     */
+	 * 信息
+	 */
 	@RequestMapping("/info/{id}")
 	//@RequiresPermissions("member:member:info")
 	public R info(@PathVariable("id") Long id) {
-            MemberEntity member = memberService.getById(id);
+		MemberEntity member = memberService.getById(id);
 
 		return R.ok().put("member", member);
 	}
 
 	/**
-     * 保存
-     */
+	 * 保存
+	 */
 	@RequestMapping("/save")
 	//@RequiresPermissions("member:member:save")
 	public R save(@RequestBody MemberEntity member) {
-            memberService.save(member);
+		memberService.save(member);
 
 		return R.ok();
 	}
 
 	/**
-     * 修改
-     */
+	 * 修改
+	 */
 	@RequestMapping("/update")
 	//@RequiresPermissions("member:member:update")
 	public R update(@RequestBody MemberEntity member) {
-            memberService.updateById(member);
+		memberService.updateById(member);
 
 		return R.ok();
 	}
 
 	/**
-     * 删除
-     */
+	 * 删除
+	 */
 	@RequestMapping("/delete")
 	//@RequiresPermissions("member:member:delete")
 	public R delete(@RequestBody Long[] ids) {
-            memberService.removeByIds(Arrays.asList(ids));
+		memberService.removeByIds(Arrays.asList(ids));
 
 		return R.ok();
 	}
+
+
+	@GetMapping("/coupons")
+	public R queryMemberCoupons() {
+		MemberEntity member = new MemberEntity();
+		member.setNickname("张三");
+		member.setCity("郑州");
+		R result = couponRemoteClient.queryCoupons();
+		return R.ok().put("member", member).put("coupon", result.get("coupon"));
+	}
+	
 
 }

@@ -22,3 +22,16 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 !/.gitignore
+/gulimall-coupon/target/
+/gulimall-common/target/
+/gulimall-member/target/
+/gulimall-order/target/
+/gulimall-product/target/
+/gulimall-ware/target/
+/renren-fast/target/
+/renren-generator/target/
+
+**/**/*.xml
+**/Maven*.xml
+**/idea
+!/.idea/
