@@ -4,6 +4,8 @@ import element.io.mall.common.util.PageUtils;
 import element.io.mall.common.util.R;
 import element.io.mall.product.entity.AttrEntity;
 import element.io.mall.product.service.AttrService;
+import element.io.mall.product.vo.AttrResponseVo;
+import element.io.mall.product.vo.AttrVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,9 +44,8 @@ public class AttrController {
 	@RequestMapping("/info/{attrId}")
 	//@RequiresPermissions("product:attr:info")
 	public R info(@PathVariable("attrId") Long attrId) {
-		AttrEntity attr = attrService.getById(attrId);
-
-		return R.ok().put("attr", attr);
+		AttrResponseVo vo = attrService.getDetail(attrId);
+		return R.ok().put("attr", vo);
 	}
 
 	/**
@@ -52,10 +53,14 @@ public class AttrController {
 	 */
 	@RequestMapping("/save")
 	//@RequiresPermissions("product:attr:save")
-	public R save(@RequestBody AttrEntity attr) {
-		attrService.save(attr);
+	public R save(@RequestBody AttrVo attrVo) {
+		if (attrService.saveAttr(attrVo)) {
+			return R.ok();
+		} else {
+			return R.error();
+		}
 
-		return R.ok();
+
 	}
 
 	/**
@@ -79,5 +84,14 @@ public class AttrController {
 
 		return R.ok();
 	}
+
+
+	@GetMapping("/base/list/{catelogId}")
+	public R baseList(@PathVariable Long catelogId, @RequestParam Map<String, Object> params) {
+		params.put("catlogId", catelogId);
+		PageUtils page = attrService.queryForPage(params);
+		return R.ok().put("page", page);
+	}
+
 
 }

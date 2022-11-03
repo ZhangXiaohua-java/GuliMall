@@ -27,11 +27,11 @@ public class AttrGroupController {
 	/**
 	 * 列表
 	 */
-	@RequestMapping("/list")
+	@RequestMapping("/list/{catId}")
 	//@RequiresPermissions("product:attrgroup:list")
-	public R list(@RequestParam Map<String, Object> params) {
+	public R list(@RequestParam Map<String, Object> params, @PathVariable Long catId) {
+		params.put("catId", catId);
 		PageUtils page = attrGroupService.queryPage(params);
-
 		return R.ok().put("page", page);
 	}
 
@@ -42,8 +42,7 @@ public class AttrGroupController {
 	@RequestMapping("/info/{attrGroupId}")
 	//@RequiresPermissions("product:attrgroup:info")
 	public R info(@PathVariable("attrGroupId") Long attrGroupId) {
-		AttrGroupEntity attrGroup = attrGroupService.getById(attrGroupId);
-
+		AttrGroupEntity attrGroup = attrGroupService.findById(attrGroupId);
 		return R.ok().put("attrGroup", attrGroup);
 	}
 
@@ -52,10 +51,12 @@ public class AttrGroupController {
 	 */
 	@RequestMapping("/save")
 	//@RequiresPermissions("product:attrgroup:save")
-	public R save(@RequestBody AttrGroupEntity attrGroup) {
-		attrGroupService.save(attrGroup);
-
-		return R.ok();
+	public R save(@RequestBody AttrGroupEntity attrGroupEntity) {
+		if (attrGroupService.save(attrGroupEntity)) {
+			return R.ok();
+		} else {
+			return R.error();
+		}
 	}
 
 	/**

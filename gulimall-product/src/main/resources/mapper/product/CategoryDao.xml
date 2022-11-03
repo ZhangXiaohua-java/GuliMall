@@ -3,7 +3,7 @@
 
 <mapper namespace="element.io.mall.product.dao.CategoryDao">
 
-	<!-- 可根据自己的需求，是否要使用 -->
+    <!-- 可根据自己的需求，是否要使用 -->
     <resultMap type="element.io.mall.product.entity.CategoryEntity" id="categoryMap">
         <result property="catId" column="cat_id"/>
         <result property="name" column="name"/>
@@ -15,6 +15,16 @@
         <result property="productUnit" column="product_unit"/>
         <result property="productCount" column="product_count"/>
     </resultMap>
+
+    <select id="batchFindCategoryNames" resultMap="categoryMap">
+        select name,cat_id
+        from pms_category
+        where cat_id in
+        <foreach collection="list" item="ele" open="(" close=")" separator=",">
+            #{ele}
+        </foreach>
+
+    </select>
 
 
 </mapper>

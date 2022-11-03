@@ -4,10 +4,12 @@ import element.io.mall.common.util.PageUtils;
 import element.io.mall.common.util.R;
 import element.io.mall.product.entity.CategoryEntity;
 import element.io.mall.product.service.CategoryService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 
@@ -18,11 +20,19 @@ import java.util.Map;
  * @email 3323393308@qq.com
  * @date 2022-10-27 20:11:30
  */
+@Slf4j
 @RestController
 @RequestMapping("product/category")
 public class CategoryController {
 	@Autowired
 	private CategoryService categoryService;
+
+
+	@GetMapping("/list/tree")
+	public R listAllCategoriesWithTree() {
+		List<CategoryEntity> entities = categoryService.listCategoriesWithTree();
+		return R.ok().put("data", entities);
+	}
 
 	/**
 	 * 列表
@@ -31,8 +41,17 @@ public class CategoryController {
 	//@RequiresPermissions("product:category:list")
 	public R list(@RequestParam Map<String, Object> params) {
 		PageUtils page = categoryService.queryPage(params);
-
 		return R.ok().put("page", page);
+	}
+
+	@PostMapping("/update/batch")
+	public R updateBatch(@RequestBody List<CategoryEntity> categoryEntities) {
+		boolean saveBatch = categoryService.updateBatchById(categoryEntities);
+		if (saveBatch) {
+			return R.ok();
+		} else {
+			return R.error();
+		}
 	}
 
 
@@ -43,7 +62,6 @@ public class CategoryController {
 	//@RequiresPermissions("product:category:info")
 	public R info(@PathVariable("catId") Long catId) {
 		CategoryEntity category = categoryService.getById(catId);
-
 		return R.ok().put("category", category);
 	}
 
@@ -53,9 +71,13 @@ public class CategoryController {
 	@RequestMapping("/save")
 	//@RequiresPermissions("product:category:save")
 	public R save(@RequestBody CategoryEntity category) {
-		categoryService.save(category);
-
-		return R.ok();
+		log.info("接收到的参数{}", category);
+		boolean save = categoryService.save(category);
+		if (save) {
+			return R.ok();
+		} else {
+			return R.error();
+		}
 	}
 
 	/**
@@ -64,8 +86,7 @@ public class CategoryController {
 	@RequestMapping("/update")
 	//@RequiresPermissions("product:category:update")
 	public R update(@RequestBody CategoryEntity category) {
-		categoryService.updateById(category);
-
+		categoryService.updateCategoryInfoCaseCade(category);
 		return R.ok();
 	}
 
@@ -75,9 +96,13 @@ public class CategoryController {
 	@RequestMapping("/delete")
 	//@RequiresPermissions("product:category:delete")
 	public R delete(@RequestBody Long[] catIds) {
-		categoryService.removeByIds(Arrays.asList(catIds));
-
-		return R.ok();
+		boolean hasRemove = categoryService.removeByIds(Arrays.asList(catIds));
+		if (hasRemove) {
+			return R.ok();
+		} else {
+			return R.error();
+		}
 	}
+
 
 }

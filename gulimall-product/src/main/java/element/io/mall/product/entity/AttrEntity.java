@@ -2,14 +2,13 @@ package element.io.mall.product.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
 
 import java.io.Serializable;
-import java.util.Date;
-import lombok.Data;
 
 /**
  * 商品属性
- * 
+ *
  * @author 张晓华
  * @email 3323393308@qq.com
  * @date 2022-10-27 20:11:30
@@ -60,5 +59,6 @@ public class AttrEntity implements Serializable {
 	 * 快速展示【是否展示在介绍上；0-否 1-是】，在sku中仍然可以调整
 	 */
 	private Integer showDesc;
+
 
 }

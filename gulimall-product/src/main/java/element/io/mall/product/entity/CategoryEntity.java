@@ -1,15 +1,14 @@
 package element.io.mall.product.entity;
 
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
+import lombok.Data;
 
 import java.io.Serializable;
-import java.util.Date;
-import lombok.Data;
+import java.util.List;
 
 /**
  * 商品三级分类
- * 
+ *
  * @author 张晓华
  * @email 3323393308@qq.com
  * @date 2022-10-27 20:11:30
@@ -22,7 +21,7 @@ public class CategoryEntity implements Serializable {
 	/**
 	 * 分类id
 	 */
-	@TableId
+	@TableId(type = IdType.AUTO)
 	private Long catId;
 	/**
 	 * 分类名称
@@ -39,6 +38,7 @@ public class CategoryEntity implements Serializable {
 	/**
 	 * 是否显示[0-不显示，1显示]
 	 */
+	@TableLogic(delval = "0", value = "1")
 	private Integer showStatus;
 	/**
 	 * 排序
@@ -56,5 +56,9 @@ public class CategoryEntity implements Serializable {
 	 * 商品数量
 	 */
 	private Integer productCount;
+
+
+	@TableField(exist = false)
+	private List<CategoryEntity> children;
 
 }

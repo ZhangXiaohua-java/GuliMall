@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import element.io.mall.common.util.PageUtils;
 import element.io.mall.product.entity.CategoryEntity;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -16,5 +17,16 @@ import java.util.Map;
 public interface CategoryService extends IService<CategoryEntity> {
 
 	PageUtils queryPage(Map<String, Object> params);
+
+	List<CategoryEntity> listCategoriesWithTree();
+
+	Long[] findCategoryPath(Long categoryId);
+
+	void findParent(Long id, List<Long> path);
+
+
+	boolean updateCategoryInfoCaseCade(CategoryEntity category);
+	
+
 }
 

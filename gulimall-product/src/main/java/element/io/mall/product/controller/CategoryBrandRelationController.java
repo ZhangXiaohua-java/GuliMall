@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 
@@ -19,7 +20,7 @@ import java.util.Map;
  * @date 2022-10-27 20:11:30
  */
 @RestController
-@RequestMapping("product/categorybrandrelation")
+@RequestMapping("/product/categorybrandrelation")
 public class CategoryBrandRelationController {
 	@Autowired
 	private CategoryBrandRelationService categoryBrandRelationService;
@@ -31,7 +32,6 @@ public class CategoryBrandRelationController {
 	//@RequiresPermissions("product:categorybrandrelation:list")
 	public R list(@RequestParam Map<String, Object> params) {
 		PageUtils page = categoryBrandRelationService.queryPage(params);
-
 		return R.ok().put("page", page);
 	}
 
@@ -53,9 +53,11 @@ public class CategoryBrandRelationController {
 	@RequestMapping("/save")
 	//@RequiresPermissions("product:categorybrandrelation:save")
 	public R save(@RequestBody CategoryBrandRelationEntity categoryBrandRelation) {
-		categoryBrandRelationService.save(categoryBrandRelation);
-
-		return R.ok();
+		if (categoryBrandRelationService.saveRelation(categoryBrandRelation)) {
+			return R.ok();
+		} else {
+			return R.error();
+		}
 	}
 
 	/**
@@ -79,5 +81,12 @@ public class CategoryBrandRelationController {
 
 		return R.ok();
 	}
+
+	@GetMapping("/catelog/list")
+	public R catelogList(@RequestParam Long brandId) {
+		List<CategoryBrandRelationEntity> list = categoryBrandRelationService.findCategoryBrandRelation(brandId);
+		return R.ok().put("data", list);
+	}
+
 
 }

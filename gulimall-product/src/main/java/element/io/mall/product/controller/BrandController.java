@@ -2,9 +2,13 @@ package element.io.mall.product.controller;
 
 import element.io.mall.common.util.PageUtils;
 import element.io.mall.common.util.R;
+import element.io.mall.common.validation.AppendGroup;
+import element.io.mall.common.validation.ModifyGroup;
 import element.io.mall.product.entity.BrandEntity;
 import element.io.mall.product.service.BrandService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -18,6 +22,7 @@ import java.util.Map;
  * @email 3323393308@qq.com
  * @date 2022-10-27 20:11:30
  */
+@Slf4j
 @RestController
 @RequestMapping("product/brand")
 public class BrandController {
@@ -31,7 +36,6 @@ public class BrandController {
 	//@RequiresPermissions("product:brand:list")
 	public R list(@RequestParam Map<String, Object> params) {
 		PageUtils page = brandService.queryPage(params);
-
 		return R.ok().put("page", page);
 	}
 
@@ -43,7 +47,6 @@ public class BrandController {
 	//@RequiresPermissions("product:brand:info")
 	public R info(@PathVariable("brandId") Long brandId) {
 		BrandEntity brand = brandService.getById(brandId);
-
 		return R.ok().put("brand", brand);
 	}
 
@@ -52,10 +55,13 @@ public class BrandController {
 	 */
 	@RequestMapping("/save")
 	//@RequiresPermissions("product:brand:save")
-	public R save(@RequestBody BrandEntity brand) {
-		brandService.save(brand);
+	public R save(@Validated({AppendGroup.class}) @RequestBody BrandEntity brand) {
+		if (brandService.save(brand)) {
+			return R.ok();
+		} else {
+			return R.error();
+		}
 
-		return R.ok();
 	}
 
 	/**
@@ -63,9 +69,14 @@ public class BrandController {
 	 */
 	@RequestMapping("/update")
 	//@RequiresPermissions("product:brand:update")
-	public R update(@RequestBody BrandEntity brand) {
-		brandService.updateById(brand);
+	public R update(@RequestBody @Validated({ModifyGroup.class}) BrandEntity brand) {
+		brandService.updateBrandInfoCaseCade(brand);
+		return R.ok();
+	}
 
+	@RequestMapping("/update/status")
+	public R updateStatus(@RequestBody BrandEntity brand) {
+		brandService.updateById(brand);
 		return R.ok();
 	}
 
@@ -76,8 +87,8 @@ public class BrandController {
 	//@RequiresPermissions("product:brand:delete")
 	public R delete(@RequestBody Long[] brandIds) {
 		brandService.removeByIds(Arrays.asList(brandIds));
-
 		return R.ok();
 	}
+
 
 }

@@ -2,7 +2,7 @@ spring:
   datasource:
     username: root
     password: root
-    url: jdbc:mysql://192.168.56.3:3306/gulimall_pms?useUnicode=true&useSSL=false&serverTimezone=GMT%2B8
+    url: jdbc:mysql://192.168.56.3:3306/gulimall_pms?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=GMT%2B8
   application:
     name: gulimall-product
   cloud:
@@ -14,6 +14,14 @@ spring:
         namespace: 4c2d7013-05c4-4037-8aa4-0cfa8d964c64
         group: JAVA_GROUP
         file-extension: yaml
-        
+
+
+
 server:
   port: 10001
+mybatis-plus:
+  global-config:
+    db-config:
+      id-type: auto
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

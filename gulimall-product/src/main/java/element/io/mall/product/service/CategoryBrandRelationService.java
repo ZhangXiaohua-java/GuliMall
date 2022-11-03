@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import element.io.mall.common.util.PageUtils;
 import element.io.mall.product.entity.CategoryBrandRelationEntity;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -16,5 +17,11 @@ import java.util.Map;
 public interface CategoryBrandRelationService extends IService<CategoryBrandRelationEntity> {
 
 	PageUtils queryPage(Map<String, Object> params);
+
+	List<CategoryBrandRelationEntity> findCategoryBrandRelation(Long brandId);
+
+
+	boolean saveRelation(CategoryBrandRelationEntity categoryBrandRelation);
+	
 }
 
