@@ -25,5 +25,8 @@ public interface AttrService extends IService<AttrEntity> {
 
 
 	AttrResponseVo getDetail(Long attrId);
+
+	boolean updateInfo(AttrVo vo);
+	
 }
 

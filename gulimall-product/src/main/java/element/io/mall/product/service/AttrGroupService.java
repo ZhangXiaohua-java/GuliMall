@@ -2,8 +2,11 @@ package element.io.mall.product.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import element.io.mall.common.util.PageUtils;
+import element.io.mall.product.entity.AttrEntity;
 import element.io.mall.product.entity.AttrGroupEntity;
+import element.io.mall.product.vo.AttrGroupRelationVo;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -19,6 +22,17 @@ public interface AttrGroupService extends IService<AttrGroupEntity> {
 
 	AttrGroupEntity findById(Long attrGroupId);
 
+
+	List<AttrEntity> queryRelationsByAttrGroupId(Map<String, Object> params);
+
+	PageUtils queryNoRelationAttrs(Map<String, Object> params);
+
+
+	boolean saveRelations(AttrGroupRelationVo[] relationVos);
+
+
+	boolean batchDeleteRelations(AttrGroupRelationVo[] relationVos);
+	
 
 }
 

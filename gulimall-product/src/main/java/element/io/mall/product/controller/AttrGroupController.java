@@ -2,12 +2,15 @@ package element.io.mall.product.controller;
 
 import element.io.mall.common.util.PageUtils;
 import element.io.mall.common.util.R;
+import element.io.mall.product.entity.AttrEntity;
 import element.io.mall.product.entity.AttrGroupEntity;
 import element.io.mall.product.service.AttrGroupService;
+import element.io.mall.product.vo.AttrGroupRelationVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 
@@ -80,5 +83,42 @@ public class AttrGroupController {
 
 		return R.ok();
 	}
+
+
+	@GetMapping("/{attrGroupId}/attr/relation")
+	public R queryRelations(@PathVariable Long attrGroupId, @RequestParam Map<String, Object> params) {
+		params.put("attrGroupId", attrGroupId);
+		List<AttrEntity> data = attrGroupService.queryRelationsByAttrGroupId(params);
+		return R.ok().put("data", data);
+	}
+
+	//	 attrgroup/6/noattr/relation
+
+	@GetMapping("/{attrGroupId}/noattr/relation")
+	public R queryNoRelationAttr(@PathVariable Long attrGroupId, @RequestParam Map<String, Object> params) {
+		params.put("attrGroupId", attrGroupId);
+		PageUtils page = attrGroupService.queryNoRelationAttrs(params);
+		return R.ok().put("page", page);
+	}
+
+	@PostMapping("/attr/relation")
+	public R addRelation(@RequestBody AttrGroupRelationVo[] relationVos) {
+		if (relationVos.length != 0 && attrGroupService.saveRelations(relationVos)) {
+			return R.ok();
+		} else {
+			return R.error(403, "提交非法数据");
+		}
+	}
+
+	@PostMapping("/attr/relation/delete")
+	public R deleteRelation(@RequestBody AttrGroupRelationVo[] relationVos) {
+		if (relationVos.length != 0 && attrGroupService.batchDeleteRelations(relationVos)) {
+			return R.ok();
+		} else {
+			return R.error(403, "提交非法数据");
+		}
+
+	}
+
 
 }

@@ -2,7 +2,6 @@ package element.io.mall.product.controller;
 
 import element.io.mall.common.util.PageUtils;
 import element.io.mall.common.util.R;
-import element.io.mall.product.entity.AttrEntity;
 import element.io.mall.product.service.AttrService;
 import element.io.mall.product.vo.AttrResponseVo;
 import element.io.mall.product.vo.AttrVo;
@@ -68,10 +67,13 @@ public class AttrController {
 	 */
 	@RequestMapping("/update")
 	//@RequiresPermissions("product:attr:update")
-	public R update(@RequestBody AttrEntity attr) {
-		attrService.updateById(attr);
+	public R update(@RequestBody AttrVo vo) {
+		if (attrService.updateInfo(vo)) {
+			return R.ok();
+		} else {
+			return R.error();
+		}
 
-		return R.ok();
 	}
 
 	/**
@@ -93,5 +95,12 @@ public class AttrController {
 		return R.ok().put("page", page);
 	}
 
-
+	@GetMapping("/sale/list/{catelogId}")
+	public R saleList(@PathVariable Long catelogId, @RequestParam Map<String, Object> params) {
+		params.put("catlogId", catelogId);
+		params.put("type", "sale");
+		PageUtils page = attrService.queryForPage(params);
+		return R.ok().put("page", page);
+	}
+	
 }

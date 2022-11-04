@@ -18,7 +18,10 @@ import java.util.List;
 @Mapper
 public interface AttrAttrgroupRelationDao extends BaseMapper<AttrAttrgroupRelationEntity> {
 
-	List<Long> batchFindGroupId(@Param("list") ArrayList<Long> attrIds);
-	
+	List<AttrAttrgroupRelationEntity> batchFindGroupId(@Param("list") ArrayList<Long> attrIds);
+
+
+	int batchDeleteRelations(@Param("list") List<AttrAttrgroupRelationEntity> relationEntities);
+
 
 }

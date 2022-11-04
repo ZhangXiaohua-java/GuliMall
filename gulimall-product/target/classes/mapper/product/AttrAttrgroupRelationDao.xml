@@ -11,8 +11,17 @@
         <result property="attrSort" column="attr_sort"/>
     </resultMap>
 
-    <select id="batchFindGroupId" resultType="java.lang.Long">
-        select attr_group_id
+    <delete id="batchDeleteRelations">
+        delete
+        from pms_attr_attrgroup_relation
+        where
+        <foreach collection="list" item="ele" open="(" close=")" separator="or">
+            attr_id = #{ele.attrId} and attr_group_id =#{ele.attrGroupId}
+        </foreach>
+    </delete>
+
+    <select id="batchFindGroupId" resultMap="attrAttrgroupRelationMap">
+        select attr_group_id,attr_id
         from pms_attr_attrgroup_relation
         where attr_id in
         <foreach item="id" collection="list" separator="," open="(" close=")">

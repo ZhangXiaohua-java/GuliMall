@@ -13,7 +13,7 @@
         <result property="catelogId" column="catelog_id"/>
     </resultMap>
     <select id="batchFindNames" resultMap="attrGroupMap">
-        select attr_group_name,catelog_id
+        select attr_group_name,catelog_id,attr_group_id
         from pms_attr_group
         where attr_group_id in
         <foreach collection="list" item="ele" open="(" close=")" separator=",">

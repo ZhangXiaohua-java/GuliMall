@@ -7,6 +7,7 @@ import element.io.mall.product.entity.AttrAttrgroupRelationEntity;
 import element.io.mall.product.service.AttrAttrgroupRelationService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 
@@ -17,5 +18,13 @@ public class AttrAttrgroupRelationServiceImpl extends ServiceImpl<AttrAttrgroupR
 	public PageUtils queryPage(Map<String, Object> params) {
 		return null;
 	}
+
+
+	@Override
+	public boolean batchRemoveRelations(List<AttrAttrgroupRelationEntity> relationEntities) {
+		int count = this.baseMapper.batchDeleteRelations(relationEntities);
+		return count == relationEntities.size();
+	}
+	
 
 }
