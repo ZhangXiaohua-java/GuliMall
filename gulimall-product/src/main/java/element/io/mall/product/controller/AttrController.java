@@ -102,5 +102,7 @@ public class AttrController {
 		PageUtils page = attrService.queryForPage(params);
 		return R.ok().put("page", page);
 	}
+
+	//	/product/product/attr/sale/list/${this.spu.catalogId}
 	
 }

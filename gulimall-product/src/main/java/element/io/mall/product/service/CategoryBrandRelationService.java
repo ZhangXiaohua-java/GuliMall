@@ -3,6 +3,7 @@ package element.io.mall.product.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import element.io.mall.common.util.PageUtils;
 import element.io.mall.product.entity.CategoryBrandRelationEntity;
+import element.io.mall.product.vo.BrandVo;
 
 import java.util.List;
 import java.util.Map;
@@ -22,6 +23,9 @@ public interface CategoryBrandRelationService extends IService<CategoryBrandRela
 
 
 	boolean saveRelation(CategoryBrandRelationEntity categoryBrandRelation);
-	
+
+	List<BrandVo> queryBrandRelations(Long catId);
+
+
 }
 

@@ -44,6 +44,12 @@ public class CosController {
 	private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
 
+	@Value("${spring.cloud.alicloud.access-key}")
+	private String accessId;
+
+	private static String aliBucketName = "guli-mall2022.oss-cn-qingdao.aliyuncs.com";
+
+
 	@PostMapping("/sign")
 	public Object sign(@RequestBody String fileName) {
 		fileName = dateTimeFormatter.format(LocalDate.now()) + fileName;
@@ -59,23 +65,16 @@ public class CosController {
 
 	@GetMapping("/alicloud")
 	public R alibaba() {
-		String accessId = "LTAI5tRPQVUs35xAAVJKq9qc";
-		String bucketName = "guli-mall2022.oss-cn-qingdao.aliyuncs.com";
 		String dir = new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + "/";
 		Date expireDate = new Date(System.currentTimeMillis() + 60 * 1000 * 3);
-		String host = "https://" + bucketName;
-
+		String host = "https://" + aliBucketName;
 		PolicyConditions policyConditions = new PolicyConditions();
-
 		policyConditions.addConditionItem(PolicyConditions.COND_CONTENT_LENGTH_RANGE, 0, 1048576000);
 		policyConditions.addConditionItem(MatchMode.StartWith, PolicyConditions.COND_KEY, dir);
-
 		String postPolicy = ossClient.generatePostPolicy(expireDate, policyConditions);
-
 		byte[] bytes = postPolicy.getBytes(StandardCharsets.UTF_8);
 		String encodedPolicy = BinaryUtil.toBase64String(bytes);
 		String signature = ossClient.calculatePostSignature(postPolicy);
-
 		LinkedHashMap<String, String> map = new LinkedHashMap<>();
 		map.put("policy", encodedPolicy);
 		map.put("signature", signature);

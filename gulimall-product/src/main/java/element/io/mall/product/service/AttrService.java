@@ -6,6 +6,7 @@ import element.io.mall.product.entity.AttrEntity;
 import element.io.mall.product.vo.AttrResponseVo;
 import element.io.mall.product.vo.AttrVo;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -27,6 +28,9 @@ public interface AttrService extends IService<AttrEntity> {
 	AttrResponseVo getDetail(Long attrId);
 
 	boolean updateInfo(AttrVo vo);
+
+	List<AttrEntity> batchQueryAttrs(List<Long> attrIds);
 	
+
 }
 

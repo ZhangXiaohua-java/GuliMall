@@ -18,4 +18,8 @@ public class SpuInfoDescServiceImpl extends ServiceImpl<SpuInfoDescDao, SpuInfoD
 		return null;
 	}
 
+	@Override
+	public void saveDesc(SpuInfoDescEntity spuInfoDescEntity) {
+		this.baseMapper.insert(spuInfoDescEntity);
+	}
 }

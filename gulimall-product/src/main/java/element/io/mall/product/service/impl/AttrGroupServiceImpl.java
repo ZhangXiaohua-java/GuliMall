@@ -13,8 +13,11 @@ import element.io.mall.product.entity.AttrEntity;
 import element.io.mall.product.entity.AttrGroupEntity;
 import element.io.mall.product.service.AttrAttrgroupRelationService;
 import element.io.mall.product.service.AttrGroupService;
+import element.io.mall.product.service.AttrService;
 import element.io.mall.product.service.CategoryService;
 import element.io.mall.product.vo.AttrGroupRelationVo;
+import element.io.mall.product.vo.AttrGroupWithAttrsVo;
+import org.springframework.beans.BeanUtils;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -43,6 +46,11 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
 	@Lazy
 	@Resource
 	private AttrAttrgroupRelationService attrAttrgroupRelationService;
+
+
+	@Lazy
+	@Resource
+	private AttrService attrService;
 
 
 	@Override
@@ -165,5 +173,36 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
 				}).collect(Collectors.toList());
 		return attrAttrgroupRelationService.batchRemoveRelations(relationEntities);
 	}
+
+
+	@Override
+	public List<AttrGroupWithAttrsVo> getAttrGroupWithAttrs(Long catelogId) {
+		LambdaQueryWrapper<AttrGroupEntity> queryWrapper = new LambdaQueryWrapper<>();
+		queryWrapper.eq(AttrGroupEntity::getCatelogId, catelogId);
+		// 指定分类下的所有分组信息
+		List<AttrGroupEntity> attrGroupEntities = this.baseMapper.selectList(queryWrapper);
+		// 分组id的收集
+		List<Long> groupIds = attrGroupEntities.stream().map(group -> group.getAttrGroupId()).collect(Collectors.toList());
+		// 收集属性的id
+		List<AttrAttrgroupRelationEntity> attrgroupRelationEntities = attrAttrgroupRelationService.getAttrIds(groupIds);
+		// 收集属性id
+		List<Long> attrIds = attrgroupRelationEntities.stream().map(e -> e.getAttrId()).collect(Collectors.toList());
+		List<AttrEntity> attrEntities = attrService.batchQueryAttrs(attrIds);
+		return attrGroupEntities.stream().map(item -> {
+			AttrGroupWithAttrsVo vo = new AttrGroupWithAttrsVo();
+			BeanUtils.copyProperties(item, vo);
+			Long groupId = item.getAttrGroupId();
+			// 获取该分组对应的所有属性的id
+			List<Long> ids = attrgroupRelationEntities.stream().filter(relation -> relation.getAttrGroupId().equals(groupId)).collect(Collectors.toList())
+					.stream().map(relation -> relation.getAttrId()).collect(Collectors.toList());
+			// 过滤出需要的属性信息
+			List<AttrEntity> attrs = attrEntities.stream().filter(attr -> ids.contains(attr.getAttrId()))
+					.collect(Collectors.toList());
+			vo.setAttrs(attrs);
+			return vo;
+
+		}).collect(Collectors.toList());
+	}
+
 
 }

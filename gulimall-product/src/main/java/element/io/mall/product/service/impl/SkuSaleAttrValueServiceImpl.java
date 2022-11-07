@@ -7,6 +7,7 @@ import element.io.mall.product.entity.SkuSaleAttrValueEntity;
 import element.io.mall.product.service.SkuSaleAttrValueService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 
@@ -17,5 +18,12 @@ public class SkuSaleAttrValueServiceImpl extends ServiceImpl<SkuSaleAttrValueDao
 	public PageUtils queryPage(Map<String, Object> params) {
 		return null;
 	}
+
+
+	@Override
+	public void batchSaveSaleAttrs(List<SkuSaleAttrValueEntity> attrValueEntities) {
+		this.saveBatch(attrValueEntities);
+	}
+	
 
 }

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import element.io.mall.common.util.PageUtils;
 import element.io.mall.product.entity.SkuSaleAttrValueEntity;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -16,5 +17,9 @@ import java.util.Map;
 public interface SkuSaleAttrValueService extends IService<SkuSaleAttrValueEntity> {
 
 	PageUtils queryPage(Map<String, Object> params);
+
+	void batchSaveSaleAttrs(List<SkuSaleAttrValueEntity> attrValueEntities);
+	
+
 }
 

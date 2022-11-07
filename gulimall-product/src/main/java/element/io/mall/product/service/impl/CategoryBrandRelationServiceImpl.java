@@ -10,12 +10,14 @@ import element.io.mall.product.entity.BrandEntity;
 import element.io.mall.product.entity.CategoryBrandRelationEntity;
 import element.io.mall.product.entity.CategoryEntity;
 import element.io.mall.product.service.CategoryBrandRelationService;
+import element.io.mall.product.vo.BrandVo;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @Service("categoryBrandRelationService")
@@ -27,6 +29,9 @@ public class CategoryBrandRelationServiceImpl extends ServiceImpl<CategoryBrandR
 
 	@Resource
 	private CategoryDao categoryDao;
+
+	@Resource
+	private CategoryBrandRelationService categoryBrandRelationService;
 
 	@Override
 	public PageUtils queryPage(Map<String, Object> params) {
@@ -66,5 +71,20 @@ public class CategoryBrandRelationServiceImpl extends ServiceImpl<CategoryBrandR
 		}
 	}
 
+	@Override
+	public List<BrandVo> queryBrandRelations(Long catId) {
+		LambdaQueryWrapper<CategoryBrandRelationEntity> wrapper = new LambdaQueryWrapper<>();
+		wrapper.select(CategoryBrandRelationEntity::getBrandName, CategoryBrandRelationEntity::getBrandId);
+		wrapper.eq(CategoryBrandRelationEntity::getCatelogId, catId);
+		List<CategoryBrandRelationEntity> relationEntities = this.baseMapper.selectList(wrapper);
+		List<BrandVo> vos = relationEntities.stream().map(e -> {
+			BrandVo vo = new BrandVo();
+			vo.setBrandId(e.getBrandId());
+			vo.setBrandName(e.getBrandName());
+			return vo;
+		}).collect(Collectors.toList());
+		return vos;
+	}
+	
 
 }

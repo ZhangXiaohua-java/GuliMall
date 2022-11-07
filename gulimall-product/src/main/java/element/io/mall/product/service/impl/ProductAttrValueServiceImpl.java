@@ -6,7 +6,9 @@ import element.io.mall.product.dao.ProductAttrValueDao;
 import element.io.mall.product.entity.ProductAttrValueEntity;
 import element.io.mall.product.service.ProductAttrValueService;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
+import java.util.List;
 import java.util.Map;
 
 
@@ -18,4 +20,13 @@ public class ProductAttrValueServiceImpl extends ServiceImpl<ProductAttrValueDao
 		return null;
 	}
 
+
+	@Override
+	public void batchSaveAttrs(List<ProductAttrValueEntity> productAttrValueEntities) {
+		if (CollectionUtils.isEmpty(productAttrValueEntities)) {
+			return;
+		}
+		this.saveBatch(productAttrValueEntities);
+	}
+	
 }

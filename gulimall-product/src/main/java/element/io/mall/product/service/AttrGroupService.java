@@ -5,6 +5,7 @@ import element.io.mall.common.util.PageUtils;
 import element.io.mall.product.entity.AttrEntity;
 import element.io.mall.product.entity.AttrGroupEntity;
 import element.io.mall.product.vo.AttrGroupRelationVo;
+import element.io.mall.product.vo.AttrGroupWithAttrsVo;
 
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,9 @@ public interface AttrGroupService extends IService<AttrGroupEntity> {
 
 
 	boolean batchDeleteRelations(AttrGroupRelationVo[] relationVos);
+
+
+	List<AttrGroupWithAttrsVo> getAttrGroupWithAttrs(Long catelogId);
 	
 
 }

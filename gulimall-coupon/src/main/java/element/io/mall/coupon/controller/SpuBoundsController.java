@@ -80,4 +80,11 @@ public class SpuBoundsController {
 		return R.ok();
 	}
 
+	@PostMapping("/detail/save")
+	public R saveDetailReductionInfo(@RequestBody SpuBoundsEntity boundsEntity) {
+		boundsEntity.setWork(1);
+		spuBoundsService.save(boundsEntity);
+		return R.ok();
+	}
+
 }

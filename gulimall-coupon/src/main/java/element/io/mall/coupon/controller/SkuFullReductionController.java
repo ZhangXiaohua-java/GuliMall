@@ -1,5 +1,6 @@
 package element.io.mall.coupon.controller;
 
+import element.io.mall.common.to.SkuReductionTo;
 import element.io.mall.common.util.PageUtils;
 import element.io.mall.common.util.R;
 import element.io.mall.coupon.entity.SkuFullReductionEntity;
@@ -78,6 +79,16 @@ public class SkuFullReductionController {
 		skuFullReductionService.removeByIds(Arrays.asList(ids));
 
 		return R.ok();
+	}
+
+
+	@PostMapping("/reduction/save")
+	public R saveDeatailReduction(SkuReductionTo skuReductionTo) {
+		if (skuFullReductionService.saveReduction(skuReductionTo)) {
+			return R.ok();
+		} else {
+			return R.error();
+		}
 	}
 
 }

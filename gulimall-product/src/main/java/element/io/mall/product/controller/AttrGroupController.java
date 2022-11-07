@@ -6,6 +6,7 @@ import element.io.mall.product.entity.AttrEntity;
 import element.io.mall.product.entity.AttrGroupEntity;
 import element.io.mall.product.service.AttrGroupService;
 import element.io.mall.product.vo.AttrGroupRelationVo;
+import element.io.mall.product.vo.AttrGroupWithAttrsVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +22,7 @@ import java.util.Map;
  * @email 3323393308@qq.com
  * @date 2022-10-27 20:11:30
  */
+@SuppressWarnings({"all"})
 @RestController
 @RequestMapping("product/attrgroup")
 public class AttrGroupController {
@@ -118,6 +120,14 @@ public class AttrGroupController {
 			return R.error(403, "提交非法数据");
 		}
 
+	}
+
+//	 http://127.0.0.1/api/product/attrgroup/225/withattr?t=1667722129436
+
+	@GetMapping("/{catelogId}/withattr")
+	public R getAttrGroupWithAttrs(@PathVariable Long catelogId) {
+		List<AttrGroupWithAttrsVo> vos = attrGroupService.getAttrGroupWithAttrs(catelogId);
+		return R.ok().put("data", vos);
 	}
 
 

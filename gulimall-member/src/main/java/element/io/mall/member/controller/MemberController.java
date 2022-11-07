@@ -1,6 +1,5 @@
 package element.io.mall.member.controller;
 
-import element.io.mall.common.service.CouponRemoteClient;
 import element.io.mall.common.util.PageUtils;
 import element.io.mall.common.util.R;
 import element.io.mall.member.entity.MemberEntity;
@@ -8,7 +7,6 @@ import element.io.mall.member.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -26,11 +24,7 @@ public class MemberController {
 
 	@Autowired
 	private MemberService memberService;
-
-
-	@Resource
-	private CouponRemoteClient couponRemoteClient;
-
+	
 
 	/**
 	 * 列表
@@ -88,15 +82,5 @@ public class MemberController {
 		return R.ok();
 	}
 
-
-	@GetMapping("/coupons")
-	public R queryMemberCoupons() {
-		MemberEntity member = new MemberEntity();
-		member.setNickname("张三");
-		member.setCity("郑州");
-		R result = couponRemoteClient.queryCoupons();
-		return R.ok().put("member", member).put("coupon", result.get("coupon"));
-	}
-	
 
 }

@@ -19,7 +19,10 @@ public interface AttrAttrgroupRelationService extends IService<AttrAttrgroupRela
 	PageUtils queryPage(Map<String, Object> params);
 
 	boolean batchRemoveRelations(List<AttrAttrgroupRelationEntity> relationEntities);
-	
+
+
+	List<AttrAttrgroupRelationEntity> getAttrIds(List<Long> groupIds);
+
 
 }
 

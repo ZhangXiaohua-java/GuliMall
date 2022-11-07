@@ -4,6 +4,7 @@ import element.io.mall.common.util.PageUtils;
 import element.io.mall.common.util.R;
 import element.io.mall.product.entity.CategoryBrandRelationEntity;
 import element.io.mall.product.service.CategoryBrandRelationService;
+import element.io.mall.product.vo.BrandVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -67,7 +68,6 @@ public class CategoryBrandRelationController {
 	//@RequiresPermissions("product:categorybrandrelation:update")
 	public R update(@RequestBody CategoryBrandRelationEntity categoryBrandRelation) {
 		categoryBrandRelationService.updateById(categoryBrandRelation);
-
 		return R.ok();
 	}
 
@@ -88,5 +88,12 @@ public class CategoryBrandRelationController {
 		return R.ok().put("data", list);
 	}
 
+//	 /product/product/categorybrandrelation/brands/list
+
+	@GetMapping("/brands/list")
+	public R queryBrandsRelations(@RequestParam(name = "catId") Long catId) {
+		List<BrandVo> vos = categoryBrandRelationService.queryBrandRelations(catId);
+		return R.ok().put("data", vos);
+	}
 
 }

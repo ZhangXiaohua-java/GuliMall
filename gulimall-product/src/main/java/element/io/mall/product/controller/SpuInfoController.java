@@ -4,6 +4,7 @@ import element.io.mall.common.util.PageUtils;
 import element.io.mall.common.util.R;
 import element.io.mall.product.entity.SpuInfoEntity;
 import element.io.mall.product.service.SpuInfoService;
+import element.io.mall.product.vo.SpuInfoVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,12 +27,12 @@ public class SpuInfoController {
 
 	/**
 	 * 列表
+	 * // http://127.0.0.1/api/product/spuinfo/list?t=1667789010334&page=1&limit=10
 	 */
 	@RequestMapping("/list")
 	//@RequiresPermissions("product:spuinfo:list")
 	public R list(@RequestParam Map<String, Object> params) {
 		PageUtils page = spuInfoService.queryPage(params);
-
 		return R.ok().put("page", page);
 	}
 
@@ -50,12 +51,15 @@ public class SpuInfoController {
 	/**
 	 * 保存
 	 */
-	@RequestMapping("/save")
-	//@RequiresPermissions("product:spuinfo:save")
-	public R save(@RequestBody SpuInfoEntity spuInfo) {
-		spuInfoService.save(spuInfo);
+	//http://127.0.0.1/api/product/spuinfo/save
+	@PostMapping("/save")
+	public R save(@RequestBody SpuInfoVo spuInfoVo) {
+		if (spuInfoService.saveSpuInfo(spuInfoVo)) {
+			return R.ok();
+		} else {
+			return R.error();
+		}
 
-		return R.ok();
 	}
 
 	/**
@@ -79,5 +83,6 @@ public class SpuInfoController {
 
 		return R.ok();
 	}
+
 
 }

@@ -26,12 +26,11 @@ public class SkuInfoController {
 
 	/**
 	 * 列表
+	 * page=1&limit=10&key=&catelogId=0&brandId=0&min=0&max=0
 	 */
 	@RequestMapping("/list")
-	//@RequiresPermissions("product:skuinfo:list")
 	public R list(@RequestParam Map<String, Object> params) {
 		PageUtils page = skuInfoService.queryPage(params);
-
 		return R.ok().put("page", page);
 	}
 

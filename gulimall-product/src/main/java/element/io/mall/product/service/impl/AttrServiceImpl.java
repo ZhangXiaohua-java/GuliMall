@@ -178,5 +178,12 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
 		return count == 1;
 	}
 
+	@Override
+	public List<AttrEntity> batchQueryAttrs(List<Long> attrIds) {
+		LambdaQueryWrapper<AttrEntity> wrapper = new LambdaQueryWrapper<>();
+		wrapper.in(AttrEntity::getAttrId, attrIds);
+		return this.baseMapper.selectList(wrapper);
+	}
+	
 
 }
