@@ -5,6 +5,7 @@ import element.io.mall.common.util.R;
 import element.io.mall.ware.entity.PurchaseEntity;
 import element.io.mall.ware.service.PurchaseService;
 import element.io.mall.ware.vo.PurchaseMergeVo;
+import element.io.mall.ware.vo.PurchaseVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -98,5 +99,10 @@ public class PurchaseController {
 		return R.ok();
 	}
 
+	@PostMapping("/task/report")
+	public R reportTaskStatus(@RequestBody PurchaseVo purchaseVo) {
+		purchaseService.savePurchaseTaskProgress(purchaseVo);
+		return R.ok();
+	}
 
 }

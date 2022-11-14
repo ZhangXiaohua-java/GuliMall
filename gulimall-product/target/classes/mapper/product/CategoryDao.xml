@@ -25,6 +25,11 @@
         </foreach>
 
     </select>
+    <select id="selectAllCategories" resultType="element.io.mall.product.entity.CategoryEntity">
+        select cat_id, name, parent_cid, cat_level, sort
+        from pms_category
+        where show_status != 0
+    </select>
 
 
 </mapper>

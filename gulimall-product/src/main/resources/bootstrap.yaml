@@ -14,6 +14,11 @@ spring:
         namespace: 4c2d7013-05c4-4037-8aa4-0cfa8d964c64
         group: JAVA_GROUP
         file-extension: yaml
+  #         模板引擎配置
+  thymeleaf:
+    cache: true
+    encoding: UTF-8
+
 
 
 
@@ -23,5 +28,6 @@ mybatis-plus:
   global-config:
     db-config:
       id-type: auto
-  configuration:
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+logging:
+  level:
+    element.io.mall.product: error

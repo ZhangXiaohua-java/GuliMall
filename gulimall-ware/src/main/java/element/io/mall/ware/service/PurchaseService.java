@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import element.io.mall.common.util.PageUtils;
 import element.io.mall.ware.entity.PurchaseEntity;
 import element.io.mall.ware.vo.PurchaseMergeVo;
+import element.io.mall.ware.vo.PurchaseVo;
 
 import java.util.Map;
 
@@ -26,5 +27,7 @@ public interface PurchaseService extends IService<PurchaseEntity> {
 
 	boolean receivePurchaseOrder(Long id);
 
+	void savePurchaseTaskProgress(PurchaseVo purchaseVo);
+	
 }
 

@@ -8,6 +8,7 @@ import element.io.mall.product.dao.CategoryDao;
 import element.io.mall.product.entity.CategoryBrandRelationEntity;
 import element.io.mall.product.entity.CategoryEntity;
 import element.io.mall.product.service.CategoryService;
+import element.io.mall.product.vo.CatelogLevel2Vo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -15,6 +16,8 @@ import org.springframework.util.StringUtils;
 import javax.annotation.Resource;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static element.io.mall.common.util.DataUtil.ifNull;
 
 
 @Slf4j
@@ -95,6 +98,52 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
 			return this.baseMapper.updateById(category) == 1;
 		}
 
+	}
+
+
+	@Override
+	public Map<String, List<CatelogLevel2Vo>> findCategories() {
+		// gc overhead limit,内存不够用了,call gc试试
+		System.gc();
+		List<CategoryEntity> categoryEntities = this.baseMapper.selectAllCategories();
+		categoryEntities.stream().sorted((i1, i2) -> ifNull(i1.getSort()) - ifNull(i2.getSort()));
+		// 分别收集一级分类的信息,二级和三级的信息
+		List<CategoryEntity> level1 = categoryEntities.stream().distinct()
+				.filter(category -> category.getCatLevel().equals(Integer.valueOf(1))).collect(Collectors.toList());
+		List<CategoryEntity> level2 = categoryEntities.stream().distinct().filter(c -> c.getCatLevel().equals(Integer.valueOf(2))).collect(Collectors.toList());
+		List<CategoryEntity> level3 = categoryEntities.stream().distinct().filter(c -> c.getCatLevel().equals(Integer.valueOf(3))).collect(Collectors.toList());
+		List<List<CatelogLevel2Vo>> collect = level1.stream().map(item -> {
+			List<CatelogLevel2Vo> level2Vos = level2.stream()
+					.filter(e -> e.getParentCid().equals(item.getCatId()))
+					.map(l2 -> {
+						CatelogLevel2Vo level2Vo = new CatelogLevel2Vo();
+						level2Vo.setId(l2.getCatId().toString());
+						level2Vo.setName(l2.getName());
+						level2Vo.setCatalog1Id(item.getCatId().toString());
+						List<CatelogLevel2Vo.CatelogLevel3Vo> level3Vos = level3.stream()
+								.filter(e -> e.getParentCid().equals(l2.getCatId()))
+								.map(l3 -> {
+									CatelogLevel2Vo.CatelogLevel3Vo level3Vo = new CatelogLevel2Vo.CatelogLevel3Vo(level2Vo.getId(), l3.getCatId().toString(), l3.getName());
+									return level3Vo;
+								}).collect(Collectors.toList());
+						level2Vo.setCatalog3List(level3Vos);
+						return level2Vo;
+					}).collect(Collectors.toList());
+			return level2Vos;
+		}).collect(Collectors.toList());
+		HashMap<String, List<CatelogLevel2Vo>> map = new HashMap<>();
+		for (int i = 0; i < level1.size(); i++) {
+			map.put(level1.get(i).getCatId().toString(), collect.get(i));
+		}
+		return map;
+	}
+
+	@Override
+	public List<CategoryEntity> findLevel1Categories() {
+		LambdaQueryWrapper<CategoryEntity> queryWrapper = new LambdaQueryWrapper<>();
+		queryWrapper.select(CategoryEntity::getName, CategoryEntity::getCatId);
+		queryWrapper.eq(CategoryEntity::getParentCid, 0);
+		return this.baseMapper.selectList(queryWrapper);
 	}
 
 

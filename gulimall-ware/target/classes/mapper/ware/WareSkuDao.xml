@@ -3,7 +3,7 @@
 
 <mapper namespace="element.io.mall.ware.dao.WareSkuDao">
 
-	<!-- 可根据自己的需求，是否要使用 -->
+    <!-- 可根据自己的需求，是否要使用 -->
     <resultMap type="element.io.mall.ware.entity.WareSkuEntity" id="wareSkuMap">
         <result property="id" column="id"/>
         <result property="skuId" column="sku_id"/>
@@ -12,6 +12,11 @@
         <result property="skuName" column="sku_name"/>
         <result property="stockLocked" column="stock_locked"/>
     </resultMap>
+    <select id="selectStock" resultType="java.lang.Long">
+        SELECT IFNULL(sum(stock), 0)
+        FROM wms_ware_sku
+        WHERE sku_id = #{skuId}
+    </select>
 
 
 </mapper>

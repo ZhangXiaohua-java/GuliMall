@@ -184,6 +184,15 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
 		wrapper.in(AttrEntity::getAttrId, attrIds);
 		return this.baseMapper.selectList(wrapper);
 	}
-	
+
+	@Override
+	public List<Long> findQuickShowAttrs(List<Long> skuAttrIds) {
+		LambdaQueryWrapper<AttrEntity> queryWrapper = new LambdaQueryWrapper<>();
+		queryWrapper.select(AttrEntity::getAttrId, AttrEntity::getSearchType)
+				.eq(AttrEntity::getSearchType, 1)
+				.and(!CollectionUtils.isEmpty(skuAttrIds), condition -> condition.in(AttrEntity::getAttrId, skuAttrIds));
+		List<AttrEntity> entityList = this.baseMapper.selectList(queryWrapper);
+		return entityList.stream().map(e -> e.getAttrId()).collect(Collectors.toList());
+	}
 
 }

@@ -1,10 +1,15 @@
 package element.io.mall.product.service.impl;
 
+import com.alibaba.fastjson.TypeReference;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import element.io.mall.common.service.CouponRemoteClient;
+import element.io.mall.common.service.SearchFeignRemoteClient;
+import element.io.mall.common.service.WareFeignRemoteClient;
+import element.io.mall.common.to.SkuEsModelTo;
 import element.io.mall.common.to.SkuReductionTo;
+import element.io.mall.common.to.SkuStockVo;
 import element.io.mall.common.to.SpuBoundTo;
 import element.io.mall.common.util.PageUtils;
 import element.io.mall.common.util.R;
@@ -26,6 +31,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 
+@SuppressWarnings({"all"})
 @Slf4j
 @Service("spuInfoService")
 public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> implements SpuInfoService {
@@ -55,6 +61,19 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
 
 	@Resource
 	private CouponRemoteClient couponRemoteClient;
+
+	@Resource
+	private BrandService brandService;
+
+	@Resource
+	private CategoryService categoryService;
+
+	@Resource
+	private WareFeignRemoteClient wareFeignRemoteClient;
+
+	@Resource
+	private SearchFeignRemoteClient searchFeignRemoteClient;
+
 
 	/**
 	 * status=&key=&brandId=0&catelogId=0&page=1&limit=10
@@ -168,6 +187,56 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
 	@Override
 	public void saveBasicInfo(SpuInfoEntity spuInfoEntity) {
 		this.save(spuInfoEntity);
+	}
+
+	@Transactional(rollbackFor = {Throwable.class})
+	@Override
+	public void upSpuProduct(Long spuId) {
+		SpuInfoEntity spuInfoEntity = this.getById(spuId);
+		BrandEntity brand = brandService.getById(spuInfoEntity.getBrandId());
+		Long catalogId = spuInfoEntity.getCatalogId();
+		CategoryEntity category = categoryService.getById(catalogId);
+		// 查询所有的SKU信息
+		List<SkuInfoEntity> skus = skuInfoService.querySkusWithSpuId(spuId);
+		// 查询所有的sku的属性信息
+		List<ProductAttrValueEntity> productAttrValueEntities = productAttrValueService.queryAttrsBySpuId(spuId);
+		List<Long> skuAttrIds = productAttrValueEntities.stream().map(e -> e.getAttrId()).collect(Collectors.toList());
+		skuAttrIds = attrService.findQuickShowAttrs(skuAttrIds);
+		List<Long> finalSkuAttrIds = skuAttrIds;
+		List<ProductAttrValueEntity> attrValueEntities = productAttrValueEntities.stream().filter(attr -> finalSkuAttrIds.contains(attr.getAttrId()))
+				.collect(Collectors.toList());
+		List<SkuEsModelTo.Attrs> attrs = attrValueEntities.stream().map(item -> {
+			SkuEsModelTo.Attrs attr = new SkuEsModelTo.Attrs();
+			BeanUtils.copyProperties(item, attr);
+			return attr;
+		}).collect(Collectors.toList());
+		// 查询库存信息
+		R r = wareFeignRemoteClient.stockQuery(skuAttrIds.toArray(new Long[]{}));
+		List<SkuStockVo> data = r.getData(new TypeReference<List<SkuStockVo>>() {
+		});
+		Map<Long, Boolean> stockVoMap = data.stream().collect(Collectors.toMap(SkuStockVo::getSkuId, skuStockVo -> skuStockVo.isHasStock()));
+		//log.info("查询到的库存信息{}", data);
+		List<SkuEsModelTo> models = skus.stream().map(sku -> {
+			SkuEsModelTo model = new SkuEsModelTo();
+			BeanUtils.copyProperties(sku, model);
+			model.setSkuPrice(sku.getPrice());
+			model.setSkuImg(sku.getSkuDefaultImg());
+			model.setHasStock(false);
+			// 设置是否还有库存信息
+			model.setHasStock(Objects.isNull(stockVoMap.get(sku.getSkuId())) ? true : stockVoMap.get(sku.getSkuId()));
+			model.setHotScore(0L);
+			model.setBrandName(spuInfoEntity.getSpuName());
+			model.setBrandImg(brand.getLogo());
+			model.setCatalogName(category.getName());
+			model.setAttrs(attrs);
+			return model;
+		}).collect(Collectors.toList());
+		log.info("组装的信息{}", models);
+		R result = searchFeignRemoteClient.storageSkuInfo(models);
+		log.info("接收到的search服务的结果{}", result);
+		spuInfoEntity.setPublishStatus(1);
+		spuInfoEntity.setUpdateTime(new Date());
+		this.baseMapper.updateById(spuInfoEntity);
 	}
 
 

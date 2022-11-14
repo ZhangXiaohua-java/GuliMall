@@ -1,5 +1,7 @@
 package element.io.mall.common.util;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import element.io.mall.common.enumerations.ExceptionStatusEnum;
 
 import java.util.HashMap;
@@ -60,5 +62,11 @@ public class R extends HashMap<String, Object> {
 	public R put(String key, Object value) {
 		super.put(key, value);
 		return this;
+	}
+
+	public <T> T getData(TypeReference<T> typeReference) {
+		Object data = get("data");
+		String s = JSON.toJSONString(data);
+		return JSON.parseObject(s, typeReference);
 	}
 }

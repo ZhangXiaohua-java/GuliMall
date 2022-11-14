@@ -19,4 +19,6 @@ public interface CategoryDao extends BaseMapper<CategoryEntity> {
 
 	List<CategoryEntity> batchFindCategoryNames(@Param("list") List<Long> catelogIds);
 
+	List<CategoryEntity> selectAllCategories();
+
 }

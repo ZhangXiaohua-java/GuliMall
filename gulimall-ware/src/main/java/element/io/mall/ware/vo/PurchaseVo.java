@@ -16,14 +16,5 @@ public class PurchaseVo implements Serializable {
 
 	private List<Item> items;
 
-	@Data
-	public class Item implements Serializable {
-		private Long itemId;
-
-		private Integer status;
-
-		private String reason;
-	}
 	
-
 }

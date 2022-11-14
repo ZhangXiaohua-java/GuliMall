@@ -30,7 +30,9 @@ public interface AttrService extends IService<AttrEntity> {
 	boolean updateInfo(AttrVo vo);
 
 	List<AttrEntity> batchQueryAttrs(List<Long> attrIds);
-	
 
+
+	List<Long> findQuickShowAttrs(List<Long> skuAttrIds);
+	
 }
 

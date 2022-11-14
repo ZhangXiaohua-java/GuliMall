@@ -3,6 +3,7 @@ package element.io.mall.product.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import element.io.mall.common.util.PageUtils;
 import element.io.mall.product.entity.CategoryEntity;
+import element.io.mall.product.vo.CatelogLevel2Vo;
 
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,12 @@ public interface CategoryService extends IService<CategoryEntity> {
 
 
 	boolean updateCategoryInfoCaseCade(CategoryEntity category);
+
+
+	Map<String, List<CatelogLevel2Vo>> findCategories();
+
+
+	List<CategoryEntity> findLevel1Categories();
 	
 
 }

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -37,6 +38,13 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
 		this.baseMapper.selectPage(skuInfoEntityPage, queryWrapper);
 		return new PageUtils(skuInfoEntityPage.getRecords(), Long.valueOf(skuInfoEntityPage.getTotal()).intValue(), pageSize, pageNum);
 	}
-	
+
+
+	@Override
+	public List<SkuInfoEntity> querySkusWithSpuId(Long spuId) {
+		LambdaQueryWrapper<SkuInfoEntity> skuInfoEntityLambdaQueryWrapper = new LambdaQueryWrapper<>();
+		skuInfoEntityLambdaQueryWrapper.eq(SkuInfoEntity::getSpuId, spuId);
+		return this.baseMapper.selectList(skuInfoEntityLambdaQueryWrapper);
+	}
 
 }

@@ -1,9 +1,11 @@
 package element.io.mall.ware.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import element.io.mall.common.to.SkuStockVo;
 import element.io.mall.common.util.PageUtils;
 import element.io.mall.ware.entity.WareSkuEntity;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -16,5 +18,10 @@ import java.util.Map;
 public interface WareSkuService extends IService<WareSkuEntity> {
 
 	PageUtils queryPage(Map<String, Object> params);
+
+	void batchAddRecord(List<WareSkuEntity> wareSkuEntities);
+
+	List<SkuStockVo> queryStock(Long[] skuIds);
+
 }
 

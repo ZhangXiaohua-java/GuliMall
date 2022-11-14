@@ -17,6 +17,7 @@
         <module>gulimall-product</module>
         <module>gulimall-ware</module>
         <module>tps</module>
+        <module>elasticsearch</module>
     </modules>
 
     <dependencies>

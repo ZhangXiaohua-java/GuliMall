@@ -75,8 +75,8 @@ public class WareInfoController {
 	//@RequiresPermissions("ware:wareinfo:delete")
 	public R delete(@RequestBody Long[] ids) {
 		wareInfoService.removeByIds(Arrays.asList(ids));
-
 		return R.ok();
 	}
 
+	
 }
