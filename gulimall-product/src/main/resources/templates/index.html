@@ -203,7 +203,8 @@
                 <ul>
                     <li th:each="category: ${categories}">
                         <!--                        ctg-data="3"-->
-                        <a href="#" class="header_main_left_a" th:attr="ctg-data=${category.catId}"><b
+                        <a href="#" onclick="catagoryClick()" class="header_main_left_a"
+                           th:attr="ctg-data=${category.catId}"><b
                                 th:text="${category.name}">家用电器</b></a>
                     </li>
 
@@ -615,6 +616,7 @@
         var keyword = $("#searchText").val()
         window.location.href = "http://search.gulimall.com/search.html?keyword=" + keyword;
     }
+
 
 </script>
 <script type="text/javascript" src="/static/index/js/text.js"></script>

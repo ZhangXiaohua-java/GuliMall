@@ -20,6 +20,10 @@
         <module>elasticsearch</module>
     </modules>
 
+    <properties>
+        <redisson-version>3.18.0</redisson-version>
+    </properties>
+
     <dependencies>
 
     </dependencies>
@@ -57,8 +61,20 @@
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
+            <dependency>
+                <groupId>org.redisson</groupId>
+                <artifactId>redisson</artifactId>
+                <version>3.18.0</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
+    <repositories>
+        <repository>
+            <id>huaweicloud</id>
+            <name>mirror from maven huaweicloud</name>
+            <url>https://repo.huaweicloud.com/repository/maven/</url>
+        </repository>
+    </repositories>
 
 </project>

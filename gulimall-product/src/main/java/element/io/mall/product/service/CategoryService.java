@@ -5,6 +5,7 @@ import element.io.mall.common.util.PageUtils;
 import element.io.mall.product.entity.CategoryEntity;
 import element.io.mall.product.vo.CatelogLevel2Vo;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -29,11 +30,11 @@ public interface CategoryService extends IService<CategoryEntity> {
 	boolean updateCategoryInfoCaseCade(CategoryEntity category);
 
 
-	Map<String, List<CatelogLevel2Vo>> findCategories();
+	Map<String, List<CatelogLevel2Vo>> findCategories() throws IOException;
 
 
 	List<CategoryEntity> findLevel1Categories();
-	
+
 
 }
 

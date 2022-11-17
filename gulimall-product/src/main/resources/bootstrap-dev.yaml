@@ -1,11 +1,4 @@
 spring:
-  cache:
-    type: redis
-    redis:
-      key-prefix: Spring_Cache
-      cache-null-values: true
-      use-key-prefix: true
-      time-to-live: 3600000
   datasource:
     username: root
     password: root
@@ -32,11 +25,6 @@ spring:
       max-active: 100
       min-idle: 3
     password: redis
-  http:
-    encoding:
-      charset: UTF-8
-      enabled: true
-      force: true
 
 
 
@@ -48,6 +36,4 @@ logging:
   level:
     element.io.mall.product: info
 server:
-  port: 10002
-  tomcat:
-    uri-encoding: UTF-8
+  port: 10007

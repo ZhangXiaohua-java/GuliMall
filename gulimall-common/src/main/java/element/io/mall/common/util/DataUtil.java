@@ -1,5 +1,8 @@
 package element.io.mall.common.util;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
+
 import java.util.Objects;
 
 /**
@@ -20,5 +23,17 @@ public final class DataUtil {
 		}
 	}
 
+	/**
+	 * 类型转换工具
+	 *
+	 * @param data          要转换的数据
+	 * @param typeReference 期望的数据类型
+	 * @param <T>           要转转的目标类型
+	 * @return 目标对象
+	 */
+	public static <T> T typeConvert(Object data, TypeReference<T> typeReference) {
+		String str = JSON.toJSONString(data);
+		return JSON.parseObject(str, typeReference);
+	}
 
 }

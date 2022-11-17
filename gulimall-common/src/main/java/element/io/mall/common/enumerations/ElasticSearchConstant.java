@@ -6,6 +6,6 @@ package element.io.mall.common.enumerations;
  */
 public class ElasticSearchConstant {
 
-	public static final String PRODUCT_INDEX = "product";
+	public static final String PRODUCT_INDEX = "gulimall_product";
 
 }

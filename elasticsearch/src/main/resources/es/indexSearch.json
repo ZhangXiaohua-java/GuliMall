@@ -1,0 +1,143 @@
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "match": {
+            "skuTitle": "5G"
+          }
+        }
+      ],
+      "filter": [
+        {
+          "terms": {
+            "brandId": [
+              "13",
+              "14"
+            ]
+          }
+        },
+        {
+          "range": {
+            "skuPrice": {
+              "gt": 0,
+              "lt": 8000
+            }
+          }
+        },
+        {
+          "term": {
+            "catalogId": "225"
+          }
+        },
+        {
+          "nested": {
+            "path": "attrs",
+            "query": [
+              {
+                "term": {
+                  "attrs.attrId": "36"
+                }
+              },
+              {
+                "term": {
+                  "attrs.attrValue": "FaceID;人脸识别"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "term": {
+            "hasStock": {
+              "value": "true"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "sort": [
+    {
+      "saleCount": {
+        "order": "desc"
+      }
+    }
+  ],
+  "from": 0,
+  "size": 1,
+  "aggs": {
+    "brand_agg": {
+      "terms": {
+        "field": "brandId",
+        "size": 10
+      },
+      "aggs": {
+        "brand_name_agg": {
+          "terms": {
+            "field": "brandName",
+            "size": 10
+          },
+          "aggs": {
+            "brand_img_agg": {
+              "terms": {
+                "field": "brandImg",
+                "size": 10
+              }
+            }
+          }
+        }
+      }
+    },
+    "attr_agg": {
+      "nested": {
+        "path": "attrs"
+      },
+      "aggs": {
+        "attr_id_agg": {
+          "terms": {
+            "field": "attrs.attrId",
+            "size": 10
+          },
+          "aggs": {
+            "attr_name_agg": {
+              "terms": {
+                "field": "attrs.attrName",
+                "size": 10
+              },
+              "aggs": {
+                "attr_value_agg": {
+                  "terms": {
+                    "field": "attr",
+                    "size": 10
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "catalog_agg": {
+      "terms": {
+        "field": "catalogId",
+        "size": 10
+      },
+      "aggs": {
+        "catalog_name_agg": {
+          "terms": {
+            "field": "catalogName",
+            "size": 10
+          }
+        }
+      }
+    }
+  },
+  "highlight": {
+    "fields": {
+      "skuTitle": {}
+    },
+    "pre_tags": "<b style='color:red;'>",
+    "post_tags": "</b>"
+  }
+}
