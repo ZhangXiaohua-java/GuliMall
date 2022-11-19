@@ -218,6 +218,7 @@ public class ThreadTest {
 			log.info("我喜欢多线程操作");
 		}).start();
 		TimeUnit.SECONDS.sleep(10);
+
 		log.info("end");
 	}
 
