@@ -25,6 +25,8 @@ public class SearchResultVo implements Serializable {
 
 	private List<Catalog> catalogs;
 
+	private int[] pageNav;
+
 	@Data
 	public static class Attr {
 

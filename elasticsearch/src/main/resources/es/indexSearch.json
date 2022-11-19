@@ -108,7 +108,7 @@
               "aggs": {
                 "attr_value_agg": {
                   "terms": {
-                    "field": "attr",
+                    "field": "attr.attrValue",
                     "size": 10
                   }
                 }

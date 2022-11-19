@@ -2,6 +2,7 @@ package element.io.search.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import element.io.mall.common.to.SkuEsModelTo;
+import element.io.mall.common.util.DataUtil;
 import element.io.search.service.SearchService;
 import element.io.search.vo.SearchParamVo;
 import element.io.search.vo.SearchResultVo;
@@ -56,7 +57,7 @@ public class SearchServiceImpl implements SearchService {
 
 	private static final Integer HAS_STOCK = 1;
 
-	private static final Integer PAGE_SIZE = 2;
+	private static final Integer PAGE_SIZE = 3;
 
 	@Resource
 	private RestHighLevelClient restHighLevelClient;
@@ -113,7 +114,7 @@ public class SearchServiceImpl implements SearchService {
 				}
 				String[] attrItem = attr.split("_");
 				String attrId = attrItem[0];
-				QueryBuilder attrQueryCondition = QueryBuilders.termsQuery("attrs.attrId", attrId);
+				QueryBuilder attrQueryCondition = QueryBuilders.termQuery("attrs.attrId", attrId);
 				NestedQueryBuilder nestedQueryBuilder = QueryBuilders.nestedQuery("attrs", attrQueryCondition, ScoreMode.None);
 				boolQueryCondition.filter(nestedQueryBuilder);
 				if (attrItem.length > 1) {
@@ -155,15 +156,25 @@ public class SearchServiceImpl implements SearchService {
 						.field("brandName").size(10)
 						.subAggregation(AggregationBuilders.terms("brand_img_agg")
 								.field("brandImg").size(10)));
-		NestedAggregationBuilder attrAgg = AggregationBuilders.nested("attr_agg", "attrs").subAggregation(AggregationBuilders.terms("attr_id_agg").field("attrs.attrId")
-				.size(10).subAggregation(AggregationBuilders.terms("attr_name_agg")
-						.field("attrs.attrName").size(10).subAggregation(AggregationBuilders.terms("attr_value_agg")
-								.field("attr.attrValue").size(10))));
+		NestedAggregationBuilder nested = AggregationBuilders.nested("attr_agg", "attrs");
+		TermsAggregationBuilder attrIdAgg = AggregationBuilders.terms("attr_id_agg").field("attrs.attrId").size(10);
+		attrIdAgg.subAggregation(AggregationBuilders.terms("attr_name_agg").field("attrs.attrName").size(10));
+
+		nested.subAggregation(attrIdAgg);
+		TermsAggregationBuilder attrValueAgg = AggregationBuilders.terms("attr_value_agg")
+				.field("attrs.attrValue").size(10);
+		attrIdAgg.subAggregation(attrValueAgg);
+		//NestedAggregationBuilder attrAgg = AggregationBuilders.nested("attr_agg", "attrs").subAggregation(AggregationBuilders.terms("attr_id_agg").field("attrs.attrId")
+		//		.size(10).subAggregation(AggregationBuilders.terms("attr_name_agg")
+		//				.field("attrs.attrName").size(10)));
+		//attrAgg.subAggregation(AggregationBuilders.terms("attr_value_agg")
+		//		.field("attrs.attrValue").size(10));
+
 		TermsAggregationBuilder catalogAgg = AggregationBuilders.terms("catalog_agg").field("catalogId").size(10)
 				.subAggregation(AggregationBuilders.terms("catalog_name_agg").field("catalogName")
 						.size(10));
 		sourceBuilder.aggregation(brandAgg);
-		sourceBuilder.aggregation(attrAgg);
+		sourceBuilder.aggregation(nested);
 		sourceBuilder.aggregation(catalogAgg);
 		sourceBuilder.query(boolQueryCondition);
 		log.info("组装的查询条件: {}", sourceBuilder.toString());
@@ -193,7 +204,7 @@ public class SearchServiceImpl implements SearchService {
 			SearchResultVo.Attr attr = new SearchResultVo.Attr();
 			long attrId = bucket.getKeyAsNumber().longValue();
 			String attrName = ((ParsedStringTerms) bucket.getAggregations().get("attr_name_agg")).getBuckets().get(0).getKeyAsString();
-			ParsedStringTerms attrValueAgg = ((ParsedStringTerms) bucket.getAggregations().get("attr_name_agg")).getBuckets().get(0).getAggregations().get("attr_value_agg");
+			ParsedStringTerms attrValueAgg = ((ParsedStringTerms) bucket.getAggregations().get("attr_value_agg"));
 			ArrayList<String> attrValues = new ArrayList<>();
 			for (Terms.Bucket attrValueAggBucket : attrValueAgg.getBuckets()) {
 				String attrValue = attrValueAggBucket.getKeyAsString();
@@ -240,7 +251,9 @@ public class SearchServiceImpl implements SearchService {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return new SearchResultVo();
+		int[] nav = DataUtil.pageNav(result.getPageNum().intValue(), Long.valueOf(totalPages).intValue(), 6);
+		result.setPageNav(nav);
+		return result;
 	}
 
 
