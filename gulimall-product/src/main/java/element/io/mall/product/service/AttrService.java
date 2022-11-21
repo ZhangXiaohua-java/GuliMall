@@ -5,6 +5,7 @@ import element.io.mall.common.util.PageUtils;
 import element.io.mall.product.entity.AttrEntity;
 import element.io.mall.product.vo.AttrResponseVo;
 import element.io.mall.product.vo.AttrVo;
+import element.io.mall.product.vo.SpuItemAttrGroupVo;
 
 import java.util.List;
 import java.util.Map;
@@ -33,6 +34,8 @@ public interface AttrService extends IService<AttrEntity> {
 
 
 	List<Long> findQuickShowAttrs(List<Long> skuAttrIds);
-	
+
+	List<SpuItemAttrGroupVo> getBasicAttrsWithCatalogIdAndSpuId(Long catalogId, Long spuId);
+
 }
 

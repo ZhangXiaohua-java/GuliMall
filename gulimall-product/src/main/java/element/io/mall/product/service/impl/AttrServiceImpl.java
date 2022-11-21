@@ -17,6 +17,7 @@ import element.io.mall.product.service.AttrService;
 import element.io.mall.product.service.CategoryService;
 import element.io.mall.product.vo.AttrResponseVo;
 import element.io.mall.product.vo.AttrVo;
+import element.io.mall.product.vo.SpuItemAttrGroupVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -193,6 +194,11 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
 				.and(!CollectionUtils.isEmpty(skuAttrIds), condition -> condition.in(AttrEntity::getAttrId, skuAttrIds));
 		List<AttrEntity> entityList = this.baseMapper.selectList(queryWrapper);
 		return entityList.stream().map(e -> e.getAttrId()).collect(Collectors.toList());
+	}
+
+	@Override
+	public List<SpuItemAttrGroupVo> getBasicAttrsWithCatalogIdAndSpuId(Long catalogId, Long spuId) {
+		return this.baseMapper.selectBasicAttrsOfSpu(catalogId, spuId);
 	}
 
 }

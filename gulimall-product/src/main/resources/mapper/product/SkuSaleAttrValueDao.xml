@@ -3,7 +3,7 @@
 
 <mapper namespace="element.io.mall.product.dao.SkuSaleAttrValueDao">
 
-	<!-- 可根据自己的需求，是否要使用 -->
+    <!-- 可根据自己的需求，是否要使用 -->
     <resultMap type="element.io.mall.product.entity.SkuSaleAttrValueEntity" id="skuSaleAttrValueMap">
         <result property="id" column="id"/>
         <result property="skuId" column="sku_id"/>
@@ -12,6 +12,28 @@
         <result property="attrValue" column="attr_value"/>
         <result property="attrSort" column="attr_sort"/>
     </resultMap>
+
+    <resultMap id="stageMap" type="element.io.mall.product.vo.SkuItemSaleAttrVo">
+        <result column="attr_id" property="attrId"></result>
+        <result column="attr_name" property="attrName"></result>
+        <collection property="valIds" ofType="element.io.mall.product.vo.AttrWithSkuIdsVo">
+            <result column="attr_value" property="value"></result>
+            <result column="sku_ids" property="skuIds"></result>
+        </collection>
+    </resultMap>
+
+    <select id="selectAllSaleAttrsBySpuId" resultMap="stageMap">
+        SELECT pss.attr_id,
+               pss.attr_name,
+               pss.attr_value,
+               GROUP_CONCAT(DISTINCT pss.sku_id) as sku_ids
+        FROM pms_sku_info AS psi
+                 LEFT JOIN pms_sku_sale_attr_value AS pss ON psi.sku_id = pss.sku_id
+        WHERE psi.spu_id = #{spuId}
+        GROUP BY pss.attr_id,
+                 pss.attr_name,
+                 pss.attr_value
+    </select>
 
 
 </mapper>

@@ -1,5 +1,6 @@
 package element.io.mall.product.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import element.io.mall.common.util.PageUtils;
 import element.io.mall.product.dao.SpuInfoDescDao;
@@ -22,4 +23,10 @@ public class SpuInfoDescServiceImpl extends ServiceImpl<SpuInfoDescDao, SpuInfoD
 	public void saveDesc(SpuInfoDescEntity spuInfoDescEntity) {
 		this.baseMapper.insert(spuInfoDescEntity);
 	}
+
+	@Override
+	public SpuInfoDescEntity getSpuDescBySpuId(Long spuId) {
+		return this.baseMapper.selectOne(new LambdaQueryWrapper<SpuInfoDescEntity>().eq(SpuInfoDescEntity::getSpuId, spuId));
+	}
+	
 }

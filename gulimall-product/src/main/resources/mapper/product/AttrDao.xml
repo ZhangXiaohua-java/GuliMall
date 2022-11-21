@@ -3,7 +3,7 @@
 
 <mapper namespace="element.io.mall.product.dao.AttrDao">
 
-	<!-- 可根据自己的需求，是否要使用 -->
+    <!-- 可根据自己的需求，是否要使用 -->
     <resultMap type="element.io.mall.product.entity.AttrEntity" id="attrMap">
         <result property="attrId" column="attr_id"/>
         <result property="attrName" column="attr_name"/>
@@ -16,6 +16,29 @@
         <result property="catelogId" column="catelog_id"/>
         <result property="showDesc" column="show_desc"/>
     </resultMap>
+
+    <resultMap id="attrs" type="element.io.mall.product.vo.SpuItemAttrGroupVo">
+        <result property="groupName" column="attr_group_name"></result>
+        <collection property="attrVos" ofType="element.io.mall.product.vo.SpuBasicAttrVo">
+            <result property="attrName" column="attr_name"></result>
+            <result property="attrValue" column="attr_value"></result>
+        </collection>
+    </resultMap>
+
+    <select id="selectBasicAttrsOfSpu" resultMap="attrs">
+        SELECT pag.attr_group_name,
+               pa.attr_name,
+               pda.attr_value
+        FROM pms_attr_group AS pag
+                 LEFT JOIN pms_attr_attrgroup_relation AS par
+                           ON pag.attr_group_id = par.attr_group_id
+                 LEFT JOIN pms_attr AS pa
+                           ON pa.attr_id = par.attr_id
+                 LEFT JOIN pms_product_attr_value AS pda
+                           ON pda.attr_id = pa.attr_id
+        WHERE pag.catelog_id = #{catalogId}
+          AND pda.spu_id = #{spuId}
+    </select>
 
 
 </mapper>

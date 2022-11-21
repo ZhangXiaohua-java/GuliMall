@@ -4,6 +4,7 @@ import com.alibaba.fastjson.parser.ParserConfig;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
+import element.io.mall.common.util.ThreadUtils;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
@@ -19,6 +20,7 @@ import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.http.MediaType;
 
 import java.util.Collections;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * @author 张晓华
@@ -98,6 +100,13 @@ public class WebConfig {
 			config = config.disableKeyPrefix();
 		}
 		return config;
+	}
+
+
+	@Bean
+	public ThreadPoolExecutor productThreadPool(ThreadConfig threadConfig) {
+		return ThreadUtils.getThreadPool(threadConfig.getCore(), threadConfig.getMax(),
+				threadConfig.getTimeout(), threadConfig.getCapacity());
 	}
 
 

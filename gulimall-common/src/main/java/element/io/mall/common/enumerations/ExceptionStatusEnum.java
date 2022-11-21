@@ -20,7 +20,9 @@ import lombok.Getter;
 public enum ExceptionStatusEnum {
 
 	SYSTEM_UNKNOWN_EXCEPTION(10001L, "未知异常,请联系系统管理员"),
-	PARAM_NOT_VALID_EXCEPTION(100010, "参数不合法");
+	PARAM_NOT_VALID_EXCEPTION(100010, "参数不合法"),
+
+	CODE_REQUEST_FREQUENTLY_EXCEPTION(100020, "验证码请求频繁");
 
 	private long code;
 
@@ -31,5 +33,5 @@ public enum ExceptionStatusEnum {
 		this.msg = msg;
 	}
 
-	
+
 }

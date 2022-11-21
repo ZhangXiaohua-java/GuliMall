@@ -31,6 +31,10 @@
             console.log('获取到的结果', getParam("keyword"));
             sort();
             render();
+            $("a[skuId]").click(function () {
+                let skuId = $(this).attr("skuId");
+                window.location.href = `http://item.gulimall.com/${skuId}.html`;
+            })
         })
 
         function pageSelect() {
@@ -1317,7 +1321,7 @@
                                 <a href="javascript:void(0);">关注</a>
                             </div>
                             <p class="da">
-                                <a href="javascript:void(0);">
+                                <a href="javascript:void(0);" th:attr="skuid=${r.skuId}">
                                     <img th:src="${r.skuImg}" class="dim">
                                 </a>
                             </p>
@@ -1331,6 +1335,7 @@
                             <p class="tab_JE">
                                 <a href="javascript:void(0);"
                                    title="购买AppleCare+，获得原厂2年整机保修(含电池)，和多达2次意外损坏的保修服务。购买勾选：保障服务、原厂保2年。"
+                                   th:attr="skuId=${r.skuId}"
                                    th:text="${r.skuTitle}">
                                     Apple iPhone 7 Plus (A1661) 32G 黑色 移动联通电信4G手机
                                 </a>

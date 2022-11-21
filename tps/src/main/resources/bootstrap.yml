@@ -12,3 +12,4 @@ spring:
       password: nacos
 server:
   port: 11000
+

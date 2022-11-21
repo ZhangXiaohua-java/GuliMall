@@ -51,3 +51,10 @@ server:
   port: 10002
   tomcat:
     uri-encoding: UTF-8
+
+product:
+  thread:
+    core: 10
+    max: 100
+    timeout: 30
+    capacity: 100
