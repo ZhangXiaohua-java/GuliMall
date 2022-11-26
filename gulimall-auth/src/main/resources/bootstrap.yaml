@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: gulimall-auth
+
+  cloud:
+    nacos:
+      server-addr: 192.168.56.2:8848
+      username: nacos
+      password: nacos
+      config:
+        namespace: 4c2d7013-05c4-4037-8aa4-0cfa8d964c64
+        file-extension: yaml
+        group: JAVA_GROUP
+  redis:
+    host: 192.168.56.3
+    port: 6379
+    password: redis
+  
+  
+  
+  thymeleaf:
+    cache: false
+  session:
+    store-type: redis
+
+
+
+server:
+  port: 13900
