@@ -74,4 +74,21 @@ public class ISmsServiceImpl implements ISmsService {
 	}
 
 
+	@Override
+	public boolean verifyCode(String phone, String verifyCode) {
+		ValueOperations ops = redisTemplate.opsForValue();
+		Object res = ops.get(CODE_PREFIX + phone);
+		if (Objects.isNull(res) || StringUtils.isEmpty(res)) {
+			return false;
+		}
+		String code = res.toString().split("_")[0];
+		if (code.equals(verifyCode)) {
+			redisTemplate.delete(CODE_PREFIX + phone);
+			return true;
+		}
+		return false;
+
+	}
+
+
 }

@@ -5943,25 +5943,25 @@ Cookie</span>是由网页服务器存放在您的访问设备上的文本文件�
     </div>
 </header>
 <section>
-    <form action="" class="one">
+    <form class="one" id="register_form">
         <div class="register-box">
             <label for="username" class="username_label">用 户 名
-                <input maxlength="20" type="text" placeholder="您的用户名和登录名">
+                <input id="username" name="username" maxlength="20" type="text" placeholder="您的用户名和登录名">
             </label>
             <div class="tips">
 
             </div>
         </div>
         <div class="register-box">
-            <label for="username" class="other_label">设 置 密 码
-                <input maxlength="20" type="password" placeholder="建议至少使用两种字符组合">
+            <label for="password" class="other_label">设 置 密 码
+                <input id="password" name="password" maxlength="20" type="password" placeholder="建议至少使用两种字符组合">
             </label>
             <div class="tips">
 
             </div>
         </div>
         <div class="register-box">
-            <label for="username" class="other_label">确 认 密 码
+            <label class="other_label">确 认 密 码
                 <input maxlength="20" type="password" placeholder="请再次输入密码">
             </label>
             <div class="tips">
@@ -5969,18 +5969,21 @@ Cookie</span>是由网页服务器存放在您的访问设备上的文本文件�
             </div>
         </div>
         <div class="register-box">
-            <label for="username" class="other_label">
+            <label for="phone" class="other_label">
                 <span>中国 0086∨</span>
-                <input id="phone" maxlength="20" type="text" placeholder="建议使用常用手机">
+                <input name="phone" id="phone" maxlength="20" type="text" placeholder="建议使用常用手机">
             </label>
             <div class="tips">
 
             </div>
         </div>
         <div class="register-box">
-            <label for="username" class="other_label">验 证 码
-                <input maxlength="20" type="text" placeholder="请输入验证码" class="caa">
+            <label for="verifyCode" class="other_label">验 证 码
+                <input id="verifyCode" name="verifyCode" maxlength="20" type="text" placeholder="请输入验证码" class="caa">
             </label>
+            <div class="tips">
+
+            </div>
             <button class="btn btn-primary" id="sendCodeBtn">发送验证码</button>
         </div>
         <div class="arguement">
@@ -5988,11 +5991,10 @@ Cookie</span>是由网页服务器存放在您的访问设备上的文本文件�
             <a href="#">《谷粒商城用户注册协议》</a>
             <a href="#">《隐私政策》</a>
             <div class="tips">
-
             </div>
             <br/>
             <div class="submit_btn">
-                <button type="submit" id="submit_btn">立 即 注 册</button>
+                <button type="button" id="registerBtn">立 即 注 册</button>
             </div>
         </div>
 
@@ -6064,7 +6066,7 @@ Cookie</span>是由网页服务器存放在您的访问设备上的文本文件�
 <script type="text/javascript" charset="utf-8">
     $(function () {
         var stuList = getStuList(); //设置传送信息：学生的集合
-
+        regist();
         //聚焦失焦input
         $('input').eq(0).focus(function () {
             if ($(this).val().length == 0) {
@@ -6294,6 +6296,53 @@ Cookie</span>是由网页服务器存放在您的访问设备上的文本文件�
             }
         })
     }
+
+    function regist() {
+        $("#registerBtn").click(function () {
+            if (!$("#xieyi").prop("checked")) {
+                alert("请同意协议后再注册!");
+                return false;
+            }
+            $.ajax({
+                url: "http://auth.gulimall.com/register",
+                type: "post",
+                contentType: "application/json",
+                dataType: "json",
+                data: JSON.stringify(collectData()),
+                success: function (data) {
+                    console.log(`接收到响应信息`, data)
+                    if (data.code != 0) {
+                        showTip(data.data);
+                    } else if (data.code == 500) {
+                        alert(data.msg);
+                    } else {
+                        window.location.href = "http://www.gulimall.com";
+                    }
+                }
+            })
+        })
+    }
+
+    function collectData() {
+        let data = {};
+        let username = $("#username").val();
+        let password = $("#password").val();
+        let phone = $("#phone").val();
+        let verifyCode = $("#verifyCode").val();
+        data = {username, password, phone, verifyCode}
+        return data;
+    }
+
+    // 展示错误的提示信息
+    function showTip(data) {
+        for (let key in data) {
+            console.log(`属性名${key},值${data[key]}`);
+            let o = $(`#${key}`).parent().parent().children(".tips");
+            o.text(data[key]);
+            o.css({"color": "red"});
+        }
+    }
+
 </script>
 </body>
 

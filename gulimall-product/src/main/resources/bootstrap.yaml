@@ -37,6 +37,8 @@ spring:
       charset: UTF-8
       enabled: true
       force: true
+  session:
+    store-type: redis
 
 
 
@@ -58,3 +60,4 @@ product:
     max: 100
     timeout: 30
     capacity: 100
+

@@ -21,8 +21,9 @@ public enum ExceptionStatusEnum {
 
 	SYSTEM_UNKNOWN_EXCEPTION(10001L, "未知异常,请联系系统管理员"),
 	PARAM_NOT_VALID_EXCEPTION(100010, "参数不合法"),
-
-	CODE_REQUEST_FREQUENTLY_EXCEPTION(100020, "验证码请求频繁");
+	CODE_REQUEST_FREQUENTLY_EXCEPTION(100020, "验证码请求频繁"),
+	
+	VERIFY_CODE_NOT_MATCH_EXCEPTION(100022, "验证码不匹配");
 
 	private long code;
 

@@ -9,4 +9,6 @@ public interface ISmsService {
 	public boolean sendCode(String phone, String ip);
 
 
+	boolean verifyCode(String phone, String verifyCode);
+	
 }

@@ -60,26 +60,26 @@
             <ul>
                 <li class="top_1">
                     <img src="/static/auth/JD_img/user_03.png" class="err_img1"/>
-                    <input type="text" placeholder=" 邮箱/用户名/已验证手机" class="user"/>
+                    <input id="account" type="text" placeholder=" 邮箱/用户名/已验证手机" class="user"/>
                 </li>
                 <li>
                     <img src="/static/auth/JD_img/user_06.png" class="err_img2"/>
-                    <input type="password" placeholder=" 密码" class="password"/>
+                    <input id="password" type="password" placeholder=" 密码" class="password"/>
                 </li>
                 <li class="bri">
                     <a href="/static/auth/">忘记密码</a>
                 </li>
                 <li class="ent">
-                    <button class="btn2"><a class="a">登 &nbsp; &nbsp;录</a></button>
+                    <button id="loginBtn"><a>登 &nbsp; &nbsp;录</a></button>
                 </li>
             </ul>
         </div>
         <div class="si_out">
             <ul>
                 <li>
-                    <a href="/static/auth/#">
+                    <a href="https://gitee.com/oauth/authorize?client_id=84324868353472a95b2eddab87c24048b534b720404697309b240276f3d7dd86&redirect_uri=http://auth.gulimall.com/oauth/gitee/token&response_type=code">
                         <img src="/static/auth/JD_img/qq.png"/>
-                        <span>QQ</span>
+                        <span>Gitee</span>
                     </a>
                 </li>
                 <li class="f4"> |</li>
@@ -130,6 +130,11 @@
 
 </body>
 <script type="text/javascript">
+
+    $(function () {
+        loginEvent();
+    })
+
     var alDiv = document.getElementsByClassName('tab');
     var alBtn = document.getElementsByTagName('h2');
     alDiv[0].style.display = 'block';
@@ -179,5 +184,47 @@
             pass.style.border = '1px solid red';
         }
     }
+
+    function loginEvent() {
+        $("#loginBtn").click(function () {
+            let data = collectData();
+            console.log(`接收到的数据${data}`, data)
+            if (data) {
+                login(data);
+            }
+
+        })
+    }
+
+    function collectData() {
+        let account = $("#account").val();
+        let password = $("#password").val();
+        if (!account || !password) {
+            return false;
+        } else {
+            let data = {};
+            data = {account, password};
+            return data;
+        }
+    }
+
+    function login(data) {
+        data = JSON.stringify(data);
+        console.log(`要提交的数据${data}`);
+        $.ajax({
+            url: "/login",
+            type: "post",
+            contentType: "application/json;charset=UTF-8",
+            dataType: "json",
+            data: data,
+            success: function (response) {
+                console.log('接收到的响应信息', response)
+                if (response.code == 0) {
+                    window.location.href = "http://www.gulimall.com";
+                }
+            }
+        })
+    }
+
 </script>
 </html>

@@ -1,6 +1,8 @@
 package element.io.mall.member.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import element.io.mall.common.to.LoginTo;
+import element.io.mall.common.to.OauthLoginTo;
 import element.io.mall.common.util.PageUtils;
 import element.io.mall.member.entity.MemberEntity;
 
@@ -16,5 +18,15 @@ import java.util.Map;
 public interface MemberService extends IService<MemberEntity> {
 
 	PageUtils queryPage(Map<String, Object> params);
+
+	boolean saveRegistedMemberInfo(MemberEntity member);
+
+	void checkPhoneOrUsernameHasRegisted(String phone, String username);
+
+
+	MemberEntity memberLogin(LoginTo loginTo);
+
+	MemberEntity oauthLogin(OauthLoginTo to);
+	
 }
 
