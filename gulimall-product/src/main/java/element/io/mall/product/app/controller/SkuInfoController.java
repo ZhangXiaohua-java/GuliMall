@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 
@@ -78,6 +79,12 @@ public class SkuInfoController {
 	public R delete(@RequestBody Long[] skuIds) {
 		skuInfoService.removeByIds(Arrays.asList(skuIds));
 		return R.ok();
+	}
+
+	@ResponseBody
+	@PostMapping("/batch/query/price")
+	public List<SkuInfoEntity> batchQuery(@RequestBody List<Long> ids) {
+		return skuInfoService.batchQuerySkuPrice(ids);
 	}
 
 

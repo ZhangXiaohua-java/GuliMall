@@ -4,7 +4,7 @@ spring:
 
   cloud:
     nacos:
-      server-addr: 192.168.56.2:8848
+      server-addr: 192.168.1.9:8848
       username: nacos
       password: nacos
       config:
@@ -12,7 +12,7 @@ spring:
         file-extension: yaml
         group: JAVA_GROUP
   redis:
-    host: 192.168.56.3
+    host: 192.168.1.9
     port: 6379
     password: redis
   

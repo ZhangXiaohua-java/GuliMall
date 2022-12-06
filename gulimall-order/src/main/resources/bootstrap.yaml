@@ -2,21 +2,58 @@ server:
   port: 9000
 
 spring:
-  datasource:
-    username: root
-    password: root
-    url: jdbc:mysql://192.168.56.3:3306/gulimall_oms?useUnicode=true&useSSL=false&serverTimezone=GMT%2B8
-
-
-  application:
-    name: gulimall-order
-
   cloud:
     nacos:
-      server-addr: 192.168.56.2:8848
+      server-addr: 192.168.1.9:8848
       username: nacos
       password: nacos
       config:
         namespace: 4c2d7013-05c4-4037-8aa4-0cfa8d964c64
         group: JAVA_GROUP
         file-extension: yaml
+        extension-configs:
+          - data-id: rabbit-config
+            refresh: true
+            group: JAVA_GROUP
+      discovery:
+        ip: 192.168.1.2
+        port: 9000
+
+  thymeleaf:
+    cache: false
+  application:
+    name: gulimall-order
+  datasource:
+    username: root
+    password: root
+    url: jdbc:mysql://192.168.1.9:3306/gulimall_oms?useUnicode=true&useSSL=false&serverTimezone=GMT%2B8
+  redis:
+    host: 192.168.1.9
+    port: 6379
+    password: redis
+feign:
+  hystrix:
+    command:
+      default:
+        isolation:
+          strategy: SEMAPHORE
+
+
+seata:
+  enabled: true
+  application-id: ${spring.application.name}-seata
+  enable-auto-data-source-proxy: true
+  tx-service-group: order_group
+  registry:
+    nacos:
+      application: seata-server
+      server-addr: 192.168.1.9:8848
+      group: SEATA_GROUP
+      username: nacos
+      password: nacos
+  service:
+    vgroup-mapping:
+      order_group: default
+    disable-global-transaction: false
+    grouplist:
+      default: 192.168.1.9:8091

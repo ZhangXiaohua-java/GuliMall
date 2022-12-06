@@ -5,6 +5,8 @@ import element.io.mall.ware.entity.WareSkuEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 /**
  * 商品库存
  *
@@ -17,4 +19,8 @@ public interface WareSkuDao extends BaseMapper<WareSkuEntity> {
 
 	Long selectStock(@Param("skuId") Long skuId);
 
+
+	List<Long> selectAvailableWares(@Param("skuId") Long skuId);
+
+	int lockStock(@Param("skuId") Long skuId, @Param("count") Integer count, @Param("wareId") Long wareId);
 }

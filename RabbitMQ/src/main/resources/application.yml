@@ -1,0 +1,20 @@
+spring:
+  rabbitmq:
+    virtual-host: /
+    host: 192.168.56.3
+    port: 5672
+    username: guest
+    password: rabbit
+    publisher-confirm-type: correlated
+    publisher-returns: true
+    template:
+      mandatory: true
+    listener:
+      simple:
+        acknowledge-mode: manual
+      direct:
+        acknowledge-mode: manual
+        retry:
+          enabled: true
+          max-attempts: 3
+

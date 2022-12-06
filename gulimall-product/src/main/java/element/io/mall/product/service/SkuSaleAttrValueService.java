@@ -19,7 +19,9 @@ public interface SkuSaleAttrValueService extends IService<SkuSaleAttrValueEntity
 	PageUtils queryPage(Map<String, Object> params);
 
 	void batchSaveSaleAttrs(List<SkuSaleAttrValueEntity> attrValueEntities);
-	
 
+
+	List<String> queryAllSaleAttrs(Long skuId);
+	
 }
 

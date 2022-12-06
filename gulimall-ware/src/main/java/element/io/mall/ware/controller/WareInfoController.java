@@ -4,6 +4,7 @@ import element.io.mall.common.util.PageUtils;
 import element.io.mall.common.util.R;
 import element.io.mall.ware.entity.WareInfoEntity;
 import element.io.mall.ware.service.WareInfoService;
+import element.io.mall.ware.vo.CourierVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -78,5 +79,10 @@ public class WareInfoController {
 		return R.ok();
 	}
 
-	
+	@GetMapping("/count/fee/{addId}")
+	public CourierVo countFee(@PathVariable Long addId) {
+		return wareInfoService.countFee(addId);
+	}
+
+
 }

@@ -16,8 +16,8 @@ import element.io.mall.product.service.SpuInfoDescService;
 import element.io.mall.product.vo.SkuItemSaleAttrVo;
 import element.io.mall.product.vo.SkuItemVo;
 import element.io.mall.product.vo.SpuItemAttrGroupVo;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
@@ -78,7 +78,6 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
 		return this.baseMapper.selectList(skuInfoEntityLambdaQueryWrapper);
 	}
 
-	@Cacheable(value = "Sku", key = "'skuInfo'+#root.args[0]")
 	@Override
 	public SkuItemVo getSkuDetailInfo(Long skuId) throws ExecutionException, InterruptedException {
 		SkuItemVo vo = new SkuItemVo();
@@ -121,18 +120,29 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
 
 
 	/**
-	 SELECT
-	 pag.attr_group_name,
-	 pa.attr_name,
-	 pda.attr_value
-	 FROM
-	 pms_attr_group AS pag
-	 LEFT JOIN pms_attr_attrgroup_relation AS par ON pag.attr_group_id = par.attr_group_id
-	 LEFT JOIN pms_attr AS pa ON pa.attr_id = par.attr_id
-	 LEFT JOIN pms_product_attr_value AS pda ON pda.attr_id = pa.attr_id
-	 WHERE
-	 pag.catelog_id = 225
-	 AND pda.spu_id = 17
+	 * SELECT
+	 * pag.attr_group_name,
+	 * pa.attr_name,
+	 * pda.attr_value
+	 * FROM
+	 * pms_attr_group AS pag
+	 * LEFT JOIN pms_attr_attrgroup_relation AS par ON pag.attr_group_id = par.attr_group_id
+	 * LEFT JOIN pms_attr AS pa ON pa.attr_id = par.attr_id
+	 * LEFT JOIN pms_product_attr_value AS pda ON pda.attr_id = pa.attr_id
+	 * WHERE
+	 * pag.catelog_id = 225
+	 * AND pda.spu_id = 17
 	 */
+
+	@Override
+	public List<SkuInfoEntity> batchQuerySkuPrice(List<Long> ids) {
+		if (CollectionUtils.isEmpty(ids)) {
+			return null;
+		}
+		LambdaQueryWrapper<SkuInfoEntity> wrapper = new LambdaQueryWrapper<>();
+		wrapper.select(SkuInfoEntity::getSkuId, SkuInfoEntity::getPrice)
+				.in(!CollectionUtils.isEmpty(ids), SkuInfoEntity::getSkuId, ids);
+		return this.list(wrapper);
+	}
 
 }

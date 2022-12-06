@@ -3,8 +3,13 @@ package element.io.mall.order.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import element.io.mall.common.util.PageUtils;
 import element.io.mall.order.entity.OrderEntity;
+import element.io.mall.order.vo.CheckResponseVo;
+import element.io.mall.order.vo.OrderRequestVo;
+import element.io.mall.order.vo.SubmitOrderResponseVo;
 
+import java.io.IOException;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 /**
  * 订单
@@ -15,6 +20,13 @@ import java.util.Map;
  */
 public interface OrderService extends IService<OrderEntity> {
 
-    PageUtils queryPage(Map<String, Object> params);
+	PageUtils queryPage(Map<String, Object> params);
+
+	CheckResponseVo checkToPay() throws ExecutionException, InterruptedException;
+
+
+	SubmitOrderResponseVo createOrder(OrderRequestVo vo) throws IOException;
+
+
 }
 

@@ -3,6 +3,7 @@ package element.io.mall.ware.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import element.io.mall.common.util.PageUtils;
 import element.io.mall.ware.entity.WareInfoEntity;
+import element.io.mall.ware.vo.CourierVo;
 
 import java.util.Map;
 
@@ -16,7 +17,9 @@ import java.util.Map;
 public interface WareInfoService extends IService<WareInfoEntity> {
 
 	PageUtils queryPage(Map<String, Object> params);
-	
 
+
+	CourierVo countFee(Long addId);
+	
 }
 

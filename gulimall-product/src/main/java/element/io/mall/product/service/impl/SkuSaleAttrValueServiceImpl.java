@@ -24,6 +24,9 @@ public class SkuSaleAttrValueServiceImpl extends ServiceImpl<SkuSaleAttrValueDao
 	public void batchSaveSaleAttrs(List<SkuSaleAttrValueEntity> attrValueEntities) {
 		this.saveBatch(attrValueEntities);
 	}
-	
 
+	@Override
+	public List<String> queryAllSaleAttrs(Long skuId) {
+		return this.baseMapper.selectSaleAttrsWithSkuId(skuId);
+	}
 }

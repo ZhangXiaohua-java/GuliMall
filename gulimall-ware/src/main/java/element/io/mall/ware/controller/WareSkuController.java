@@ -1,6 +1,7 @@
 package element.io.mall.ware.controller;
 
 import element.io.mall.common.to.SkuStockVo;
+import element.io.mall.common.to.StockLockTo;
 import element.io.mall.common.util.PageUtils;
 import element.io.mall.common.util.R;
 import element.io.mall.ware.entity.WareSkuEntity;
@@ -86,6 +87,23 @@ public class WareSkuController {
 	public R stockQuery(@RequestBody Long[] skuIds) {
 		List<SkuStockVo> wareInfoEntities = wareSkuService.queryStock(skuIds);
 		return R.ok().put("data", wareInfoEntities);
+	}
+
+
+	@PostMapping("/goods/stock")
+	public List<WareSkuEntity> goodsStock(@RequestBody List<Long> ids) {
+		return wareSkuService.queryGoodsStock(ids);
+	}
+
+	@ResponseBody
+	@PostMapping("/lock/stock")
+	public R lockStock(@RequestBody List<StockLockTo> tos) {
+		if (wareSkuService.lockStock(tos)) {
+			return R.ok();
+		} else {
+			return R.error();
+		}
+
 	}
 
 

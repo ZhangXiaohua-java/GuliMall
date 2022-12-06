@@ -19,6 +19,7 @@
         <module>tps</module>
         <module>elasticsearch</module>
         <module>gulimall-auth</module>
+        <module>gulimall-cart</module>
     </modules>
 
     <properties>
@@ -70,6 +71,7 @@
         </dependencies>
     </dependencyManagement>
 
+    
     <repositories>
         <repository>
             <id>huaweicloud</id>

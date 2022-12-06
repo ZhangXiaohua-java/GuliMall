@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: gulimall-cart
+  redis:
+    host: 192.168.1.9
+    port: 6379
+    password: redis
+  session:
+    store-type: redis
+  cloud:
+    nacos:
+      server-addr: 192.168.1.9:8848
+      config:
+        group: JAVA_GROUP
+        namespace: 4c2d7013-05c4-4037-8aa4-0cfa8d964c64
+        username: nacos
+        password: nacos
+  thymeleaf:
+    cache: false
+
+server:
+  port: 30012

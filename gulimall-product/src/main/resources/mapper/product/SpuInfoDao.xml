@@ -3,7 +3,7 @@
 
 <mapper namespace="element.io.mall.product.dao.SpuInfoDao">
 
-	<!-- 可根据自己的需求，是否要使用 -->
+    <!-- 可根据自己的需求，是否要使用 -->
     <resultMap type="element.io.mall.product.entity.SpuInfoEntity" id="spuInfoMap">
         <result property="id" column="id"/>
         <result property="spuName" column="spu_name"/>
@@ -15,6 +15,20 @@
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
     </resultMap>
+
+    <select id="selectSpuInfoBySkuId" resultType="element.io.mall.product.entity.SpuInfoEntity">
+        SELECT id,
+               spu_name,
+               spu_description,
+               catalog_id,
+               brand_id,
+               weight,
+               publish_status,
+               create_time,
+               update_time
+        FROM pms_spu_info
+        WHERE id IN (SELECT spu_id FROM pms_sku_info WHERE sku_id = #{skuId})
+    </select>
 
 
 </mapper>

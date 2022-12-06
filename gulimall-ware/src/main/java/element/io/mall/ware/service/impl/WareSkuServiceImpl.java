@@ -3,12 +3,16 @@ package element.io.mall.ware.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import element.io.mall.common.ex.NoStockException;
 import element.io.mall.common.to.SkuStockVo;
+import element.io.mall.common.to.StockLockTo;
 import element.io.mall.common.util.PageUtils;
 import element.io.mall.ware.dao.WareSkuDao;
+import element.io.mall.ware.entity.AvailableWare;
 import element.io.mall.ware.entity.WareSkuEntity;
 import element.io.mall.ware.service.WareSkuService;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -63,6 +67,45 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
 			return vo;
 		}).collect(Collectors.toList());
 		return stockVos;
+	}
+
+
+	@Override
+	public List<WareSkuEntity> queryGoodsStock(List<Long> ids) {
+		LambdaQueryWrapper<WareSkuEntity> wrapper = new LambdaQueryWrapper<>();
+		wrapper.select(WareSkuEntity::getSkuId, WareSkuEntity::getStock)
+				.in(WareSkuEntity::getSkuId, ids);
+		return this.list(wrapper);
+	}
+
+	@Override
+	public boolean lockStock(List<StockLockTo> tos) {
+		List<AvailableWare> availableWares = tos.stream().map(e -> {
+			AvailableWare availableWare = new AvailableWare();
+			availableWare.setSkuId(e.getSkuId());
+			availableWare.setCount(e.getLockCount());
+			availableWare.setWareIds(this.baseMapper.selectAvailableWares(e.getSkuId()));
+			return availableWare;
+		}).collect(Collectors.toList());
+		for (AvailableWare availableWare : availableWares) {
+			boolean flag = false;
+			if (CollectionUtils.isEmpty(availableWare.getWareIds())) {
+				//	 没有库存信息,直接抛异常结束
+				throw new NoStockException(availableWare.getSkuId());
+			} else {
+				for (Long wareId : availableWare.getWareIds()) {
+					int num = this.baseMapper.lockStock(availableWare.getSkuId(), availableWare.getCount(), wareId);
+					if (num == 1) {
+						flag = true;
+						break;
+					}
+				}
+				if (!flag) {
+					throw new NoStockException(availableWare.getSkuId());
+				}
+			}
+		}
+		return true;
 	}
 
 

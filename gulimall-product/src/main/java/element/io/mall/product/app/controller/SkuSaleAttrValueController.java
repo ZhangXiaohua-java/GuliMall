@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 
@@ -78,6 +79,12 @@ public class SkuSaleAttrValueController {
 		skuSaleAttrValueService.removeByIds(Arrays.asList(ids));
 
 		return R.ok();
+	}
+
+
+	@GetMapping("/sale/attrs/list/{skuId}")
+	public List<String> saleAttr(@PathVariable Long skuId) {
+		return skuSaleAttrValueService.queryAllSaleAttrs(skuId);
 	}
 
 }

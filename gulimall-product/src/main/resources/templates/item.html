@@ -618,7 +618,7 @@
 
                 <div class="box-btns clear">
                     <div class="box-btns-one">
-                        <input type="text" name="" id="" value="1"/>
+                        <input type="text" name="" id="count" value="1"/>
                         <div class="box-btns-one1">
                             <div>
                                 <button id="jia">
@@ -634,8 +634,8 @@
                         </div>
                     </div>
                     <div class="box-btns-two">
-                        <a href="../商品分类\index.html">
-                            立即预约
+                        <a href="javascript:void(0)" id="addItem">
+                            加入购物车
                         </a>
                     </div>
                     <div class="box-btns-three">
@@ -1521,9 +1521,13 @@
 <script src="/static/item/js/js.js" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript">
 
+    var sku = 0;
+
+
     $(function () {
         saleAttrProcess();
         initialize();
+        addItem();
     })
 
     function initialize() {
@@ -1531,6 +1535,7 @@
         let regex = /(item.gulimall.com\/)(\d+).html(\/.*)?/;
         regex.test(tmp);
         let currentSku = RegExp.$2;
+        sku = currentSku;
         console.log(`获取到的sku的值是${currentSku}`)
         $(".sale_attr").each(function (index, element) {
             console.log(`遍历到的当前元素的skuIds${$(this).attr("skuIds")}`)
@@ -1567,6 +1572,14 @@
                 window.location.href = `http://item.gulimall.com/${ele[0]}.html`
             }
 
+        })
+    }
+
+    function addItem() {
+        $("#addItem").click(function () {
+            let count = $("#count").val();
+            console.log(`当前sku${sku},数量${count}`)
+            location.href = `http://cart.gulimall.com/cart/add/${sku}/${count}`;
         })
     }
 
