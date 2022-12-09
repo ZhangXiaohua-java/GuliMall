@@ -1,6 +1,5 @@
 server:
   port: 9000
-
 spring:
   cloud:
     nacos:
@@ -31,6 +30,26 @@ spring:
     host: 192.168.1.9
     port: 6379
     password: redis
+  rabbitmq:
+    listener:
+      direct:
+        acknowledge-mode: manual
+      simple:
+        acknowledge-mode: manual
+      type: direct
+    host: 192.168.1.9
+    username: guest
+    password: guest
+    virtual-host: /
+    publisher-confirm-type: correlated
+    publisher-returns: true
+  http:
+    encoding:
+      force: true
+      charset: UTF-8
+      force-response: true
+
+
 feign:
   hystrix:
     command:
@@ -38,22 +57,22 @@ feign:
         isolation:
           strategy: SEMAPHORE
 
+#seata:
+#  enabled: true
+#  application-id: ${spring.application.name}-seata
+#  enable-auto-data-source-proxy: true
+#  tx-service-group: order_group
+#  registry:
+#    nacos:
+#      application: seata-server
+#      server-addr: 192.168.1.9:8848
+#      group: SEATA_GROUP
+#      username: nacos
+#      password: nacos
+#  service:
+#    vgroup-mapping:
+#      order_group: default
+#    disable-global-transaction: false
+#    grouplist:
+#      default: 192.168.1.9:8091
 
-seata:
-  enabled: true
-  application-id: ${spring.application.name}-seata
-  enable-auto-data-source-proxy: true
-  tx-service-group: order_group
-  registry:
-    nacos:
-      application: seata-server
-      server-addr: 192.168.1.9:8848
-      group: SEATA_GROUP
-      username: nacos
-      password: nacos
-  service:
-    vgroup-mapping:
-      order_group: default
-    disable-global-transaction: false
-    grouplist:
-      default: 192.168.1.9:8091

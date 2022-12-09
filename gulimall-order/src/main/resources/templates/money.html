@@ -21,7 +21,7 @@
         <dl>
             <dt><img src="/static/money/img/saoyisao.png" alt=""></dt>
             <dd>
-                <span>订单提交成功，请尽快付款！订单号：70715901829</span>
+                <span>订单提交成功，请尽快付款！订单号： [[${param.get('orderSn')}]]</span>
                 <span>应付金额<font>28.90</font>元</span>
             </dd>
             <dd>
@@ -41,7 +41,7 @@
                     <span>白条还款日 2018-01-27</span>
                     <span><font>优惠</font>随机立减(最高10元)</span>
                 </li>
-                <li>支付<font>28.90</font>元</li>
+                <li>支付<font></font>元</li>
             </ul>
             <ol>
                 <li>
@@ -101,7 +101,10 @@
                 <img src="/static/money/img/weixin.png" alt="">微信支付
             </li>
             <li>
-                <img src="/static/money/img/zhifubao.png" style="weight:auto;height:30px;" alt="">支付宝
+                <img class="aliPay" src="/static/money/img/zhifubao.png"
+                     th:href="'http://order.gulimall.com//toPay/' +${param.get('orderSn')}"
+                     style=" weight:auto;height:30px;" alt="">
+                <a class="aliPay" th:href="'http://order.gulimall.com//toPay/' +${param.get('orderSn')}">支付宝</a>
             </li>
         </ul>
     </div>
@@ -170,5 +173,19 @@
     }).mouseout(function () {
         $(this).css({"color": "black"})
     })
+
+    $(function () {
+        toPay();
+    })
+
+    function toPay() {
+        $(".aliPay").click(function () {
+            let url = $(this).attr("href");
+            console.log(url)
+            location.href = url;
+            return false;
+        })
+    }
+
 </script>
 </html>

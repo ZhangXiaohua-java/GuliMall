@@ -945,6 +945,7 @@
     </p>
 </div>
 <script>
+
     $(document).ready(function () {
         $('.header-right li:nth-of-type(6)').hover(function () {
             $('.header-r-11').css('display', 'block')
@@ -1036,7 +1037,9 @@
             success: function (resp) {
                 console.log("接收到的响应信息", resp)
                 if (resp.code == 0) {
-                    location.href = "http://order.gulimall.com/money.html";
+                    let orderSn = resp.orderSn;
+                    console.log(orderSn)
+                    location.href = `http://order.gulimall.com/money.html?orderSn=${orderSn}`;
                 } else {
                     alert(resp.msg);
                 }

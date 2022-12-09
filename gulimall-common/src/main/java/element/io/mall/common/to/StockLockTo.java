@@ -13,5 +13,8 @@ public class StockLockTo {
 	private Long skuId;
 	// 需要锁定的库存数量
 	private Integer lockCount;
-	
+
+	// 订单标识
+	private String orderSn;
+
 }

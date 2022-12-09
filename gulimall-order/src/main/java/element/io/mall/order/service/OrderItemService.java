@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import element.io.mall.common.util.PageUtils;
 import element.io.mall.order.entity.OrderItemEntity;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -16,5 +17,8 @@ import java.util.Map;
 public interface OrderItemService extends IService<OrderItemEntity> {
 
 	PageUtils queryPage(Map<String, Object> params);
+
+	List<OrderItemEntity> batchQueryItemsByOrderSnCollection(List<String> orderSnCollection);
+	
 }
 

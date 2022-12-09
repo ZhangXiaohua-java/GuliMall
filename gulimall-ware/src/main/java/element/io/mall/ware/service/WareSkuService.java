@@ -1,6 +1,7 @@
 package element.io.mall.ware.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import element.io.mall.common.msg.StockLockedTo;
 import element.io.mall.common.to.SkuStockVo;
 import element.io.mall.common.to.StockLockTo;
 import element.io.mall.common.util.PageUtils;
@@ -27,6 +28,10 @@ public interface WareSkuService extends IService<WareSkuEntity> {
 	List<WareSkuEntity> queryGoodsStock(List<Long> ids);
 
 	boolean lockStock(List<StockLockTo> tos);
+
+	boolean unlockStock(StockLockedTo to);
+
+	boolean subStock(String orderSn);
 	
 }
 

@@ -34,6 +34,7 @@ public class CheckResponseVo {
 	private String orderToken;
 
 	private Integer count;
+	
 
 	private Map<Long, Boolean> stockStatus;
 

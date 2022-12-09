@@ -1,5 +1,6 @@
 package element.io.mall.common.util;
 
+import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -16,6 +17,10 @@ public final class CodeUtils {
 			sb.append(num);
 		}
 		return sb.toString();
+	}
+
+	public static String randomUUID() {
+		return UUID.randomUUID().toString().replace("-", "");
 	}
 
 

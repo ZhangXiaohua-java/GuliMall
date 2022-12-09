@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageProperties;
-import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -16,13 +15,15 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.UUID;
 
 /**
  * @author 张晓华
  * @date 2022-11-28
  */
-@RabbitListener(queues = {"guli", "report"})
+//@RabbitListener(queues = {"guli"}, queuesToDeclare = {@Queue(name = "guli", durable = "true", exclusive = "false")}, bindings = {@QueueBinding(value = @Queue("guli"), exchange = @Exchange("dd"), key = "weather")})
 @Slf4j
 @Service
 public class MessageServiceImpl implements MessageService {
@@ -44,20 +45,20 @@ public class MessageServiceImpl implements MessageService {
 
 
 	@Override
-	// String 直接接收消息体中的内容,需要手动解析
+// String 直接接收消息体中的内容,需要手动解析
 	public void receiveMessage(String msg) {
 		log.info("接收到的消息{}", msg);
 	}
 
 
 	// 可以直接接收对象数据,使用对象的原始数据类型
-	@RabbitHandler
+	//@RabbitHandler
 	@Override
 	public void receiveMessage(UserInfo userInfo) {
 		log.info("接收到的对象信息{}", userInfo);
 	}
 
-	@RabbitHandler
+	//@RabbitHandler
 	@Override
 	public void receiveWeatherInfo(Message message, Weather weather, Channel channel) throws InterruptedException {
 		long seq = message.getMessageProperties().getDeliveryTag();
@@ -104,5 +105,19 @@ public class MessageServiceImpl implements MessageService {
 		rabbitTemplate.convertAndSend(exchange, routingKey, weather, new CorrelationData(UUID.randomUUID().toString()));
 	}
 
+	@RabbitListener(queues = {"order.release.queue"})
+	public void consumeDelayedMessage(Message message, Channel channel, Weather msg) {
+		long seq = message.getMessageProperties().getDeliveryTag();
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String current = dateFormat.format(new Date());
+		String str = dateFormat.format(msg.getTime());
+		log.info("source:{}", message);
+		log.info("接收到消息,当前时间是:{},消息的发送时间:{}", current, str);
+		try {
+			channel.basicAck(seq, false);
+		} catch (IOException e) {
+			throw new RuntimeException("消息确认失败");
+		}
+	}
 
 }

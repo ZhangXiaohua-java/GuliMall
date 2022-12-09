@@ -21,6 +21,13 @@
           and stock - stock_locked - #{count} > 0
     </update>
 
+    <update id="unlock">
+        update wms_ware_sku
+        set stock_locked = stock_locked - #{skuNum}
+        where sku_id = #{skuId}
+          and ware_id = #{wareId}
+    </update>
+
 
     <select id="selectStock" resultType="java.lang.Long">
         SELECT IFNULL(sum(stock), 0)

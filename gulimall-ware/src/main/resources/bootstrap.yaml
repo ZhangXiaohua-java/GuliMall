@@ -1,6 +1,5 @@
 server:
   port: 11001
-
 spring:
   datasource:
     username: root
@@ -23,6 +22,15 @@ spring:
         port: 11001
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
+  rabbitmq:
+    host: 192.168.1.9
+    username: guest
+    password: guest
+    listener:
+      simple:
+        acknowledge-mode: manual
+      direct:
+        acknowledge-mode: manual
 
 mybatis-plus:
   configuration:
@@ -31,23 +39,22 @@ mybatis-plus:
     db-config:
       id-type: auto
 
-
-seata:
-  enabled: true
-  application-id: ${spring.application.name}-seata
-  enable-auto-data-source-proxy: true
-  tx-service-group: order_group
-  registry:
-    nacos:
-      application: seata-server
-      server-addr: 192.168.1.9:8848
-      group: SEATA_GROUP
-      username: nacos
-      password: nacos
-      namespace:
-  service:
-    vgroup-mapping:
-      order_group: default
-    disable-global-transaction: false
-    grouplist:
-      default: 192.168.1.9:8091
+#seata:
+#  enabled: true
+#  application-id: ${spring.application.name}-seata
+#  enable-auto-data-source-proxy: true
+#  tx-service-group: order_group
+#  registry:
+#    nacos:
+#      application: seata-server
+#      server-addr: 192.168.1.9:8848
+#      group: SEATA_GROUP
+#      username: nacos
+#      password: nacos
+#      namespace:
+#  service:
+#    vgroup-mapping:
+#      order_group: default
+#    disable-global-transaction: false
+#    grouplist:
+#      default: 192.168.1.9:8091

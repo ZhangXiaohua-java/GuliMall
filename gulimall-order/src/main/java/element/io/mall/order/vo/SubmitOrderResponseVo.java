@@ -15,4 +15,6 @@ public class SubmitOrderResponseVo {
 	// 0 success -1 token验证失败
 	private Integer code;
 
+	private String orderSn;
+
 }

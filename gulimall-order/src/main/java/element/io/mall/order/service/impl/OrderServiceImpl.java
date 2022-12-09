@@ -2,34 +2,37 @@ package element.io.mall.order.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.niezhiliang.simple.pay.dto.AlipayPcPayDTO;
 import element.io.mall.common.domain.MemberEntity;
+import element.io.mall.common.domain.MqMessageEntity;
 import element.io.mall.common.ex.NoStockException;
 import element.io.mall.common.feign.CartRemoteFeignClient;
+import element.io.mall.common.msg.OrderTo;
 import element.io.mall.common.service.MemberFeignRemoteClient;
 import element.io.mall.common.service.ProductFeignRemoteClient;
 import element.io.mall.common.service.WareFeignRemoteClient;
 import element.io.mall.common.to.*;
-import element.io.mall.common.util.DataUtil;
-import element.io.mall.common.util.FileUtils;
-import element.io.mall.common.util.PageUtils;
-import element.io.mall.common.util.R;
+import element.io.mall.common.util.*;
 import element.io.mall.order.component.UserInfoContext;
 import element.io.mall.order.dao.OrderDao;
 import element.io.mall.order.entity.OrderEntity;
 import element.io.mall.order.entity.OrderItemEntity;
+import element.io.mall.order.entity.PaymentInfoEntity;
 import element.io.mall.order.service.OrderItemService;
 import element.io.mall.order.service.OrderService;
-import element.io.mall.order.vo.CheckResponseVo;
-import element.io.mall.order.vo.OrderRequestVo;
-import element.io.mall.order.vo.OrderVo;
-import element.io.mall.order.vo.SubmitOrderResponseVo;
-import io.seata.spring.annotation.GlobalTransactional;
+import element.io.mall.order.service.PaymentInfoService;
+import element.io.mall.order.vo.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.connection.CorrelationData;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestAttributes;
@@ -38,7 +41,10 @@ import org.springframework.web.context.request.RequestContextHolder;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.net.URLEncoder;
 import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -47,11 +53,13 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.stream.Collectors;
 
+import static element.io.mall.common.enumerations.MQConstants.*;
 import static element.io.mall.common.enumerations.OrderConstants.KEY_TIME;
 import static element.io.mall.common.enumerations.OrderConstants.USER_ORDER_TOKEN_PREFIX;
-import static element.io.mall.common.enumerations.OrderStatusEnum.CREATE_NEW;
+import static element.io.mall.common.enumerations.OrderStatusEnum.*;
 
 
+@SuppressWarnings({"all"})
 @Slf4j
 @Service("orderService")
 public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> implements OrderService {
@@ -77,6 +85,12 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
 
 	@Resource
 	private OrderItemService orderItemService;
+
+	@Resource
+	private RabbitTemplate rabbitTemplate;
+
+	@Resource
+	private PaymentInfoService paymentInfoService;
 
 	@Override
 	public PageUtils queryPage(Map<String, Object> params) {
@@ -142,7 +156,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
 	}
 
 
-	@GlobalTransactional(rollbackFor = {Throwable.class})
+	//@GlobalTransactional(rollbackFor = {Throwable.class})
+	@Transactional(rollbackFor = {Throwable.class})
 	@Override
 	public SubmitOrderResponseVo createOrder(OrderRequestVo vo) throws IOException {
 		SubmitOrderResponseVo responseVo = new SubmitOrderResponseVo();
@@ -164,11 +179,17 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
 					StockLockTo to = new StockLockTo();
 					to.setSkuId(i.getSkuId());
 					to.setLockCount(i.getSkuQuantity());
+					to.setOrderSn(orderVo.getOrder().getOrderSn());
 					return to;
 				}).collect(Collectors.toList());
 				R r = wareFeignRemoteClient.lockStock(tos);
-				int num = 10 / 0;
+				//int num = 10 / 0;
 				if (0 == (int) r.get("code")) {
+					// 库存锁定成功,发送订单信息到延迟队列中
+					OrderTo order = new OrderTo();
+					order.setOrderSn(orderVo.getOrder().getOrderSn());
+					sendMsg(order);
+					responseVo.setOrderSn(orderVo.getOrder().getOrderSn());
 					responseVo.setCode(0);
 				} else {
 					throw new NoStockException("商品库存不足");
@@ -269,6 +290,146 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
 		orderItemEntity.setGiftIntegration(orderItemEntity.getRealAmount().intValue());
 		orderItemEntity.setGiftGrowth(orderItemEntity.getRealAmount().intValue() * 10);
 		return orderItemEntity;
+	}
+
+
+	@Override
+	public OrderStatusTo queryOrderStatus(String orderSn) {
+		OrderEntity order = this.getOne(new LambdaQueryWrapper<OrderEntity>()
+				.select(OrderEntity::getStatus).eq(OrderEntity::getOrderSn, orderSn));
+		OrderStatusTo to = new OrderStatusTo();
+		to.setOrderSn(orderSn);
+		if (Objects.isNull(order)) {
+			to.setStatus(4);
+		} else {
+			to.setStatus(order.getStatus());
+		}
+		return to;
+	}
+
+
+	private void sendMsg(OrderTo order) {
+		String uuid = CodeUtils.randomUUID();
+		CorrelationData correlationData = new CorrelationData(uuid);
+		rabbitTemplate.convertAndSend(ORDER_EVENT_EXCHANGE, ORDER_DELAY_QUEUE_BINDING, order, correlationData);
+		MqMessageEntity message = new MqMessageEntity();
+		message.setMessageId(uuid);
+		message.setCreateTime(new Date());
+		message.setRoutingKey(ORDER_DELAY_QUEUE_BINDING);
+		message.setToExchane(ORDER_EVENT_EXCHANGE);
+		message.setMessageStatus(0);
+		message.setClassType(MqMessageEntity.JSON);
+		message.setContent(JSON.toJSONString(order));
+		// 将消息备份到redis
+		redisTemplate.opsForValue().set(REDIS_KEY_PREFIX + uuid, message, Duration.ofDays(1));
+		log.info("order发送订单消息");
+	}
+
+	@Override
+	public OrderEntity queryOrderByOrderSn(String orderSn) {
+		LambdaQueryWrapper<OrderEntity> wrapper = new LambdaQueryWrapper<OrderEntity>()
+				.eq(OrderEntity::getOrderSn, orderSn)
+				.eq(OrderEntity::getStatus, CREATE_NEW.getCode());
+		return this.baseMapper.selectOne(wrapper);
+	}
+
+	@Override
+	public AlipayPcPayDTO getOrderInfoByOrderSn(String orderSn) throws UnsupportedEncodingException {
+		LambdaQueryWrapper<OrderEntity> wrapper = new LambdaQueryWrapper<OrderEntity>().eq(OrderEntity::getOrderSn, orderSn)
+				.eq(OrderEntity::getStatus, CREATE_NEW.getCode());
+		OrderEntity orderEntity = this.baseMapper.selectOne(wrapper);
+		if (Objects.isNull(orderEntity)) {
+			log.info("{}订单不存在", orderSn);
+			return null;
+		}
+		AlipayPcPayDTO dto = new AlipayPcPayDTO();
+		dto.setSubject(URLEncoder.encode("谷粒商城收银台", "utf-8"));
+		dto.setOutTradeNo(orderSn);
+		double money = orderEntity.getPayAmount().setScale(2, RoundingMode.UP).doubleValue();
+		dto.setTotalAmount(money);
+		dto.setBody(URLEncoder.encode("测试信息", "utf-8"));
+		return dto;
+	}
+
+
+	@Override
+	public List<OrderWithOrderItemVo> queryUserOrders(Integer pageNum, Integer pageSize) {
+		MemberEntity member = UserInfoContext.currentContext().get();
+		LambdaQueryWrapper<OrderEntity> wrapper = new LambdaQueryWrapper<>();
+		wrapper.eq(OrderEntity::getMemberId, member.getId())
+				//.ne(OrderEntity::getStatus, CANCLED.getCode())
+				.orderByDesc(OrderEntity::getCreateTime);
+		Page<OrderEntity> page = new Page<>(pageNum, pageSize);
+		this.page(page, wrapper);
+		List<OrderEntity> records = page.getRecords();
+		List<String> orderSnCollection = records.stream().map(OrderEntity::getOrderSn).collect(Collectors.toList());
+		List<OrderItemEntity> items = orderItemService.batchQueryItemsByOrderSnCollection(orderSnCollection);
+		return records.stream().map(i -> {
+			OrderWithOrderItemVo vo = new OrderWithOrderItemVo();
+			vo.setStatus(getStatusDesc(i.getStatus()));
+			vo.setOrderSn(i.getOrderSn());
+			vo.setReceiverName(i.getReceiverName());
+			vo.setCreateTime(i.getCreateTime());
+			vo.setPay(i.getPayAmount());
+			List<OrderItemEntity> collect = items.stream().filter(ele -> ele.getOrderSn().equals(i.getOrderSn())).collect(Collectors.toList());
+			vo.setItems(collect);
+			return vo;
+		}).collect(Collectors.toList());
+	}
+
+	private String getStatusDesc(Integer code) {
+		switch (code) {
+			case 0:
+				return CREATE_NEW.getMsg();
+			case 1:
+				return PAYED.getMsg();
+			case 2:
+				return SENDED.getMsg();
+			case 3:
+				return RECIEVED.getMsg();
+			case 4:
+				return CANCLED.getMsg();
+			case 5:
+				return SERVICING.getMsg();
+			case 6:
+				return SERVICED.getMsg();
+			default:
+				return " ";
+		}
+	}
+
+
+	@Transactional(rollbackFor = {Throwable.class})
+	@Override
+	public boolean updateOrderStatus(PayAsyncVo payAsyncVo) {
+		PaymentInfoEntity paymentInfoEntity = new PaymentInfoEntity();
+		paymentInfoEntity.setOrderSn(payAsyncVo.getOut_trade_no());
+		paymentInfoEntity.setAlipayTradeNo(payAsyncVo.getTrade_no());
+		paymentInfoEntity.setPaymentStatus(payAsyncVo.getTrade_status());
+		paymentInfoEntity.setCreateTime(new Date());
+		paymentInfoEntity.setCallbackTime(new Date());
+		paymentInfoEntity.setConfirmTime(new Date());
+		paymentInfoEntity.setSubject(payAsyncVo.getSubject());
+		paymentInfoEntity.setTotalAmount(new BigDecimal(payAsyncVo.getTotal_amount()));
+		OrderEntity one = this.getOne(new LambdaQueryWrapper<OrderEntity>().eq(OrderEntity::getOrderSn, payAsyncVo.getOut_trade_no()));
+		OrderEntity order = new OrderEntity();
+		order.setId(one.getId());
+		order.setStatus(PAYED.getCode());
+		if (this.updateById(order) && paymentInfoService.save(paymentInfoEntity)) {
+			// TODO 发送扣减库存的消息
+			OrderTo orderTo = new OrderTo();
+			orderTo.setOrderSn(payAsyncVo.getOut_trade_no());
+			sendSubStockMessage(orderTo);
+			log.info("发送了扣减库存的消息");
+			return true;
+		}
+		throw new RuntimeException("回滚...");
+	}
+
+
+	private void sendSubStockMessage(OrderTo order) {
+		CorrelationData correlationData = new CorrelationData(CodeUtils.randomUUID());
+		rabbitTemplate.convertAndSend(STOCK_EVENT_EXCHANGE, SUB_STOCK_QUEUE_BINDING, order, correlationData);
 	}
 
 

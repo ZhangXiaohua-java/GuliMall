@@ -5,6 +5,7 @@ import element.io.mall.common.domain.MemberEntity;
 import element.io.mall.common.enumerations.SessionConstants;
 import element.io.mall.common.util.DataUtil;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,6 +24,14 @@ public class PermissionInterceptor implements HandlerInterceptor {
 
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+		AntPathMatcher antPathMatcher = new AntPathMatcher();
+		System.out.println("请求路径" + request.getRequestURI());
+		boolean matchA = antPathMatcher.match("/order/status/**", request.getRequestURI().toString());
+		boolean matchB = antPathMatcher.match("/notify/ali", request.getRequestURI().toString());
+		if (matchA || matchB) {
+			System.out.println("满足匹配放行请求" + request.getRequestURL().toString());
+			return true;
+		}
 		HttpSession session = request.getSession(false);
 		String redirectUrl = "http://auth.gulimall.com/login.html?";
 		redirectUrl += URLEncoder.encode("msg=请先登陆", "UTF-8");

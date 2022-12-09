@@ -1,0 +1,26 @@
+#支付宝支付参数配置
+alipay:
+  #应用ID,您的APPID，收款账号既是您的APPID对应支付宝账号
+  appId: 2021000121697719
+  #商户私钥，您的PKCS8格式RSA2私钥
+  privateKey: MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCMOVP+aEiesZldsNTf5U6rlpsB+ky+bsarWnrnlx888UUoMiBZI2DE8ZcatqhNwZlAPn5/74KTAVm5xSQV9Aph+tYaCayz6foQLzkrukev1AgjCqoRW1kU0wYMmtxQb7yjXyKfPd8xowlek90RiqtLzTQyH2N3+YZWZRgBqwf4hbf5lqTO9hRvSLgB0z4AYuvm0ZMOQM1R9YYRPNzyBfhvU+x4wpw00Acr7uf3r96+Nq5TjGVx0IXaBWMXOoAOGLOdND/4ZB029/SxcIPHFHWAKbd24dFpPkcZZsdRqXcrQ5ahY6OInE9HtFYNFxqfh4rxooUC+15TzPkgUCppbpChAgMBAAECggEAPS82iyeNqFDuDod+G0O/E/ffIvnISr+jSFluj2bNZpYQCv30R3C8ZLLVr/5LacIz0Gh0YfZsDyDjub9fg4S8kwwUJ8BY7xgE2NMCKyZY6UunUULx+ijVsdRyK0XXI/HdaZu1S65/mPT+vZnfOCw9mhGr2MMBb/Qcvc3Wr8Ok8rcaK80s/mRbxf28jFarjcXRMurRbhPgtdQetNKt9NVi6fYO2af1q2GOxQ1/IS1gfWaLHcTmAub5GPzVa70SzMSXRzfDobPVfgLdEERTVWLigLCzQeQjV4Lw03nHvSUiFnyNS3nYaJoYwClqWflB8jtrTQ1O8wVmFH5dSbAFkMeL0QKBgQD649YqrwAyUIvabcxkWjjRdd4YxfBPpE5VWsCzdELDMCNG8M/+H6m4stM5RKBsTXGVl02RfYK/N1KIDIwKzZb1a8/hLVGP98rdoU5wngt4Ldz2D67t/fX1optSnIGsMxwzdMLyneX819ckL583JTW2PhmA32RUBuJZcYujnYSSLwKBgQCPFHf0z6DaVBR3yjaMjEMbeR2M5S7OKYJ7JteFtE5LD3vEXYZD0EJ4GIdAa0IjUCgIZ05Mqz6FbWWzd6mQs37gtvgOyEi8/+8Tqz8DI2SpfvYGq7ULNMvXp8InDA57jEXc7OUfnfNdVqu4QzSs6L42K3RtBW9/PIMMLyHHyHdmLwKBgCyeLi1DGA7aojSDSFEkdmxRwOC4+ua++qtVS2XerCzYN73a/7Ja4S0WqFfL65e3IhcPZF0WbBUjeor1aEZXj5wvwzVxgMrQr4RAtplykemahmxAF8T9YCuB8ot7h9ge8sn33t+U0xznKbymt3LwLCAv5Qs1Lzt+SezMM6AyWCxDAoGAG3gMh52M/h2CSHUz/8u13oJkH/aoA8CIYmhUnEC/fz2bv1lNO5uyByh+Xum4qtrqtKJQr/t4Z1lXWxswHK25QB8ghIYDIPXpylboJAwZeUj8ps80VNBwChkU9zYjWajWiNGaM3W5kUPgd+G/LSsJyZCSK5QNkdnmNuKdk6Ny+NUCgYEAsfOBG6hG1b4M7f/fOledvgb2ljbvh/yyBNtySjLYF5cldGFyDEtyJjsgmdlQXNVTChEbxzhcJuBU4WlV29zPKJJ8fDC7rFliRBc5ZxyiWXtBt1cef+RNoH7KI5NZYL2aatI3NrkbVsqIBLjBuDpVYF+RKt83S0LiJ/5a+KTxVxI=
+  #支付宝公钥,查看地址：https://openhome.alipay.com/platform/keyManage.htm 对应APPID下的支付宝公钥。
+  publicKey: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAmQCrB4aGcm28zFf3DV0cqaSKJzGm8i05F0klUhHqFXtJoZ2/JKZ1FtCcJbZMDr5jVCzbiEnEE47rTP+0WYDqqZz3DiOQILr/gyMWZFkjR2V0RdoeKvIi3W7bDTpEkkCsOSEZtZA3SRnEvdj1rfCGLPr74L23civyxnAawFLFm1ObVUWyatZ5rLswfmg2nK1rOSF5Cx+3LeJydXDkk7oGaum+SJe0k4Z34AijMUjLZMLBezDvNMeHfe/Cn2K+rChFCpOc3kv5Jfz7HES30hH4aweLiCFgd9EYFOVcZiz1MKqc2vt22XUEvbsohlOJHU9HCy4aj+qVDT91R3bzODBtMwIDAQAB
+  gatewayUrl: https://openapi.alipaydev.com/gateway.do
+  #服务器异步通知页面路径  需http://格式的完整路径，不能加?id=123这类自定义参数，必须外网可以正常访问
+  notifyUrl: http://order.gulimall.com/notify/callback
+  #页面跳转同步通知页面路径 需http://格式的完整路径，不能加?id=123这类自定义参数，必须外网可以正常访问
+  returnUrl: http://order.gulimall.com/list.html
+#wxpay:
+#  #公众号appid
+#  appId:
+#  #商户id
+#  mchId:
+#  #支付api安全密钥
+#  mchKey:
+#  #支付结果回调地址
+#  payNotify: http://40c0dd48.ngrok.io/wx/callback
+#  #退款结果回调
+#  refundNotify:
+#  #根目录下的证书名称
+#  certName: wx_pay_cert.p12

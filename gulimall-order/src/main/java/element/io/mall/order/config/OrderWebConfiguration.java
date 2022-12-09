@@ -6,13 +6,16 @@ import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 import element.io.mall.common.serializer.FastJsonSerializer;
 import element.io.mall.common.util.ThreadUtils;
 import element.io.mall.order.component.PermissionInterceptor;
+import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.http.MediaType;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -64,6 +67,17 @@ public class OrderWebConfiguration implements WebMvcConfigurer {
 		converter.setSupportedMediaTypes(Arrays.asList(MediaType.APPLICATION_JSON));
 		converter.setFastJsonConfig(config);
 		return new HttpMessageConverters(converter);
+	}
+
+	@Bean
+	public Jackson2JsonMessageConverter messageConverter() {
+		return new Jackson2JsonMessageConverter();
+	}
+
+	@LoadBalanced
+	@Bean
+	public RestTemplate restTemplate() {
+		return new RestTemplate();
 	}
 
 
