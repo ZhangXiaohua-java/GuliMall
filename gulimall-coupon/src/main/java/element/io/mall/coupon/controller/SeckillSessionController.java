@@ -1,5 +1,6 @@
 package element.io.mall.coupon.controller;
 
+import element.io.mall.common.to.SeckillSessionTo;
 import element.io.mall.common.util.PageUtils;
 import element.io.mall.common.util.R;
 import element.io.mall.coupon.entity.SeckillSessionEntity;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 
@@ -79,5 +81,12 @@ public class SeckillSessionController {
 
 		return R.ok();
 	}
+
+	@ResponseBody
+	@GetMapping("/latest/sec/kill")
+	public List<SeckillSessionTo> getLatest3DaysSecKillProducts() {
+		return seckillSessionService.getLatestSecKillProducts();
+	}
+
 
 }

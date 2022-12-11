@@ -5,13 +5,13 @@ spring:
   datasource:
     username: root
     password: root
-    url: jdbc:mysql://192.168.56.3:3306/gulimall_sms?useUnicode=true&useSSL=false&serverTimezone=GMT%2B8
+    url: jdbc:mysql://192.168.10.102:3306/gulimall_sms?useUnicode=true&useSSL=false&serverTimezone=GMT%2B8
   application:
     name: gulimall-coupon
 
   cloud:
     nacos:
-      server-addr: 192.168.56.2:8848
+      server-addr: 192.168.10.102:8848
       username: nacos
       password: nacos
       config:

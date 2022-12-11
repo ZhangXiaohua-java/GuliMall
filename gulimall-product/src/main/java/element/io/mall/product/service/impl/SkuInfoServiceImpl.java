@@ -22,12 +22,14 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.stream.Collectors;
 
 @SuppressWarnings({"all"})
 @Service("skuInfoService")
@@ -144,5 +146,20 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
 				.in(!CollectionUtils.isEmpty(ids), SkuInfoEntity::getSkuId, ids);
 		return this.list(wrapper);
 	}
+
+
+	@Override
+	public Map<Long, SkuInfoEntity> batchQuerySkuInfo(List<Long> skuIds) {
+		LambdaQueryWrapper<SkuInfoEntity> wrapper = new LambdaQueryWrapper<>();
+		wrapper.in(SkuInfoEntity::getSkuId, skuIds);
+		List<SkuInfoEntity> list = this.list(wrapper);
+		Map<Long, List<SkuInfoEntity>> collect = list.stream().collect(Collectors.groupingBy(e -> e.getSkuId()));
+		Map<Long, SkuInfoEntity> map = new HashMap();
+		collect.forEach((k, v) -> {
+			map.put(k, v.get(0));
+		});
+		return map;
+	}
+
 
 }

@@ -65,7 +65,7 @@ public class WebConfig {
 	public RedissonClient redissonClient() {
 		Config config = new Config();
 		config.useSingleServer()
-				.setAddress("redis://192.168.1.9:6379")
+				.setAddress("redis://192.168.10.102:6379")
 				.setPassword("redis")
 				.setDatabase(0);
 		// 使用EPOLL会一直报错,java.lang.ClassNotFound什么玩意...

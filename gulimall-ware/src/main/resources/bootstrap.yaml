@@ -4,26 +4,26 @@ spring:
   datasource:
     username: root
     password: root
-    url: jdbc:mysql://192.168.1.9:3306/gulimall_wms?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=GMT%2B8
+    url: jdbc:mysql://192.168.10.102:3306/gulimall_wms?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=GMT%2B8
 
   application:
     name: gulimall-ware
   cloud:
     nacos:
-      server-addr: 192.168.1.9:8848
+      server-addr: 192.168.10.102:8848
       username: nacos
       password: nacos
       config:
         namespace: 4c2d7013-05c4-4037-8aa4-0cfa8d964c64
         group: JAVA_GROUP
         file-extension: yaml
-      discovery:
-        ip: 192.168.1.2
-        port: 11001
+  #      discovery:
+  #        ip: 192.168.1.2
+  #        port: 11001
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
   rabbitmq:
-    host: 192.168.1.9
+    host: 192.168.10.102
     username: guest
     password: guest
     listener:

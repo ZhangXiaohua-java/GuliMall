@@ -1,12 +1,14 @@
 package element.io.mall.common.service;
 
 import element.io.mall.common.to.SkuInfoEntityTo;
+import element.io.mall.common.to.SkuInfoTo;
 import element.io.mall.common.to.SpuInfoTo;
 import element.io.mall.common.util.R;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author 张晓华
@@ -30,5 +32,9 @@ public interface ProductFeignRemoteClient {
 	@GetMapping("/product/spuinfo/spu/{skuId}")
 	SpuInfoTo querySpuInfoBySkuId(@PathVariable("skuId") Long skuId);
 
+
+	@ResponseBody
+	@PostMapping("/product/skuinfo/batch/query/sku/info")
+	Map<Long, SkuInfoTo> batchQuerySkuInfo(@RequestBody List<Long> skuIds);
 
 }

@@ -489,9 +489,10 @@
                 <div class="box-hide" th:text="${data.info.skuSubtitle}">预订用户预计11月30日左右陆续发货！麒麟970芯片！AI智能拍照！
                     <a href=""><u>华为 HUAWEI Mate 10 Pro 10:08 限时限量抢！</u></a>
                 </div>
-                <div class="box-yuyue">
+                <div id="yuyue" class="box-yuyue">
                     <div class="yuyue-one">
-                        <img src="/static/item/img/7270ffc3baecdd448958f9f5e69cf60f.png" alt=""/> 预约抢购
+                        <img src="/static/item/img/7270ffc3baecdd448958f9f5e69cf60f.png" alt=""/>
+                        <span id="secTip">预约抢购</span>
                     </div>
                     <div class="yuyue-two">
                         <ul>
@@ -1528,6 +1529,7 @@
         saleAttrProcess();
         initialize();
         addItem();
+        queryCurrentSkuIsInSecKill();
     })
 
     function initialize() {
@@ -1583,6 +1585,32 @@
         })
     }
 
+    function queryCurrentSkuIsInSecKill() {
+        let tmp = window.location.href;
+        let regex = /(item.gulimall.com\/)(\d+).html(\/.*)?/;
+        regex.test(tmp);
+        let currentSku = RegExp.$2;
+        $.ajax({
+            url: `http://sec.gulimall.com/curr/isSec/${currentSku}`,
+            type: "get",
+            success: function (resp) {
+                console.log("响应信息", resp)
+                // 0
+                console.log(resp.length)
+                console.log(typeof resp)
+                if (typeof resp === 'string') {
+                    $("#yuyue").empty();
+                } else {
+                    let date = new Date(resp.start);
+                    let now = new Date();
+                    if (now.getTime() - date.getTime() <= 0) {
+                        $("#secTip").text("火热进行中");
+                    }
+                    console.log("获取到的开始时间", date)
+                }
+            }
+        })
+    }
 
 </script>
 

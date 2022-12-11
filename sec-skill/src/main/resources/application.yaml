@@ -1,0 +1,15 @@
+server:
+  port: 13500
+
+spring:
+  application:
+    name: sec-skill
+  cloud:
+    nacos:
+      server-addr: 192.168.10.102:8848
+      username: nacos
+      password: nacos
+  redis:
+    host: 192.168.10.102
+    password: redis
+

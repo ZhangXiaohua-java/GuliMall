@@ -31,7 +31,6 @@ public class SeckillPromotionController {
 	//@RequiresPermissions("coupon:seckillpromotion:list")
 	public R list(@RequestParam Map<String, Object> params) {
 		PageUtils page = seckillPromotionService.queryPage(params);
-
 		return R.ok().put("page", page);
 	}
 

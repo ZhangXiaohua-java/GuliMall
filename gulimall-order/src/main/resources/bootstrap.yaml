@@ -3,7 +3,7 @@ server:
 spring:
   cloud:
     nacos:
-      server-addr: 192.168.1.9:8848
+      server-addr: 192.168.10.102:8848
       username: nacos
       password: nacos
       config:
@@ -14,9 +14,9 @@ spring:
           - data-id: rabbit-config
             refresh: true
             group: JAVA_GROUP
-      discovery:
-        ip: 192.168.1.2
-        port: 9000
+  #      discovery:
+  #        ip: 192.168.1.2
+  #        port: 9000
 
   thymeleaf:
     cache: false
@@ -25,9 +25,9 @@ spring:
   datasource:
     username: root
     password: root
-    url: jdbc:mysql://192.168.1.9:3306/gulimall_oms?useUnicode=true&useSSL=false&serverTimezone=GMT%2B8
+    url: jdbc:mysql://192.168.10.102:3306/gulimall_oms?useUnicode=true&useSSL=false&serverTimezone=GMT%2B8
   redis:
-    host: 192.168.1.9
+    host: 192.168.10.102
     port: 6379
     password: redis
   rabbitmq:
@@ -37,7 +37,7 @@ spring:
       simple:
         acknowledge-mode: manual
       type: direct
-    host: 192.168.1.9
+    host: 192.168.10.102
     username: guest
     password: guest
     virtual-host: /

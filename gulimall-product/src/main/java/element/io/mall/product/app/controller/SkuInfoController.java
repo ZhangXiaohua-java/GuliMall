@@ -1,14 +1,17 @@
 package element.io.mall.product.app.controller;
 
+import element.io.mall.common.to.SkuInfoTo;
 import element.io.mall.common.util.PageUtils;
 import element.io.mall.common.util.R;
 import element.io.mall.product.entity.SkuInfoEntity;
 import element.io.mall.product.service.SkuInfoService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -85,6 +88,18 @@ public class SkuInfoController {
 	@PostMapping("/batch/query/price")
 	public List<SkuInfoEntity> batchQuery(@RequestBody List<Long> ids) {
 		return skuInfoService.batchQuerySkuPrice(ids);
+	}
+
+	@ResponseBody
+	@PostMapping("/batch/query/sku/info")
+	public Map<Long, SkuInfoTo> batchQuerySkuInfo(@RequestBody List<Long> skuIds) {
+		Map<Long, SkuInfoTo> map = new HashMap<>();
+		skuInfoService.batchQuerySkuInfo(skuIds).forEach((k, v) -> {
+			SkuInfoTo to = new SkuInfoTo();
+			BeanUtils.copyProperties(v, to);
+			map.put(k, to);
+		});
+		return map;
 	}
 
 

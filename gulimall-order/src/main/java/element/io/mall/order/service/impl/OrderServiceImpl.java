@@ -416,7 +416,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
 		order.setId(one.getId());
 		order.setStatus(PAYED.getCode());
 		if (this.updateById(order) && paymentInfoService.save(paymentInfoEntity)) {
-			// TODO 发送扣减库存的消息
+			// TODO 发送扣减库存的消息,已完成
 			OrderTo orderTo = new OrderTo();
 			orderTo.setOrderSn(payAsyncVo.getOut_trade_no());
 			sendSubStockMessage(orderTo);

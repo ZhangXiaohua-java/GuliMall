@@ -20,6 +20,7 @@ public class GatewayConfig {
 		configuration.addAllowedOrigin("http://localhost:8001");
 		configuration.addAllowedOrigin("http://www.gulimall.com");
 		configuration.addAllowedOrigin("http://order.gulimall.com");
+		configuration.addAllowedOrigin("http://item.gulimall.com");
 		configuration.addAllowedMethod("*");
 		configuration.addAllowedHeader("*");
 		configuration.setMaxAge(3600L);

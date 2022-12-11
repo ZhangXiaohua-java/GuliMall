@@ -20,6 +20,7 @@
         <module>elasticsearch</module>
         <module>gulimall-auth</module>
         <module>gulimall-cart</module>
+        <module>sec-skill</module>
     </modules>
 
     <properties>
@@ -71,7 +72,7 @@
         </dependencies>
     </dependencyManagement>
 
-    
+
     <repositories>
         <repository>
             <id>huaweicloud</id>
