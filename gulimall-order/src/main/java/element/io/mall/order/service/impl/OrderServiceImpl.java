@@ -9,9 +9,11 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.niezhiliang.simple.pay.dto.AlipayPcPayDTO;
 import element.io.mall.common.domain.MemberEntity;
 import element.io.mall.common.domain.MqMessageEntity;
+import element.io.mall.common.enumerations.OrderStatusEnum;
 import element.io.mall.common.ex.NoStockException;
 import element.io.mall.common.feign.CartRemoteFeignClient;
 import element.io.mall.common.msg.OrderTo;
+import element.io.mall.common.msg.SecKillOrderTo;
 import element.io.mall.common.service.MemberFeignRemoteClient;
 import element.io.mall.common.service.ProductFeignRemoteClient;
 import element.io.mall.common.service.WareFeignRemoteClient;
@@ -430,6 +432,29 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
 	private void sendSubStockMessage(OrderTo order) {
 		CorrelationData correlationData = new CorrelationData(CodeUtils.randomUUID());
 		rabbitTemplate.convertAndSend(STOCK_EVENT_EXCHANGE, SUB_STOCK_QUEUE_BINDING, order, correlationData);
+	}
+
+	@Transactional(rollbackFor = {Throwable.class})
+	@Override
+	public void saveSecKillOrder(SecKillOrderTo secKillOrderTo) {
+		OrderEntity order = new OrderEntity();
+		order.setOrderSn(secKillOrderTo.getOrderSn());
+		order.setPayAmount(secKillOrderTo.getSecKillPrice().multiply(new BigDecimal(secKillOrderTo.getCount())));
+		order.setStatus(OrderStatusEnum.CREATE_NEW.getCode());
+		order.setMemberId(secKillOrderTo.getMemberId());
+		order.setCreateTime(new Date());
+		order.setModifyTime(new Date());
+		if (!this.save(order)) {
+			throw new RuntimeException("保存订单失败");
+		}
+		OrderItemEntity item = new OrderItemEntity();
+		item.setOrderSn(secKillOrderTo.getOrderSn());
+		item.setSkuId(secKillOrderTo.getSkuId());
+		item.setSkuPrice(secKillOrderTo.getSecKillPrice());
+		item.setPromotionAmount(order.getPayAmount());
+		if (!orderItemService.save(item)) {
+			throw new RuntimeException("保存订项失败");
+		}
 	}
 
 

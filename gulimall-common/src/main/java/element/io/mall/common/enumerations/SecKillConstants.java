@@ -13,5 +13,7 @@ public final class SecKillConstants {
 
 	public static final String SEC_KILL_STOCK = "seckill:stock";
 
+	public static final String SEC_KILL_ORDER_LIST = "seckill:order:list";
+
 
 }

@@ -21,6 +21,7 @@ public class GatewayConfig {
 		configuration.addAllowedOrigin("http://www.gulimall.com");
 		configuration.addAllowedOrigin("http://order.gulimall.com");
 		configuration.addAllowedOrigin("http://item.gulimall.com");
+		configuration.addAllowedOrigin("http://auth.gulimall.com");
 		configuration.addAllowedMethod("*");
 		configuration.addAllowedHeader("*");
 		configuration.setMaxAge(3600L);

@@ -634,7 +634,7 @@
 
                         </div>
                     </div>
-                    <div class="box-btns-two">
+                    <div class="box-btns-two" id="addOrSecKill">
                         <a href="javascript:void(0)" id="addItem">
                             加入购物车
                         </a>
@@ -1530,6 +1530,7 @@
         initialize();
         addItem();
         queryCurrentSkuIsInSecKill();
+        addBinding();
     })
 
     function initialize() {
@@ -1603,12 +1604,52 @@
                 } else {
                     let date = new Date(resp.start);
                     let now = new Date();
-                    if (now.getTime() - date.getTime() <= 0) {
+                    if (now.getTime() - date.getTime() >= 0) {
                         $("#secTip").text("火热进行中");
+                        $("#addOrSecKill").empty();
+                        let tem = `
+                         <a skuId="${resp.skuInfo.skuId}" token="${resp.token}" promotionSessionId="${resp.promotionSessionId}"" id="doSecKill">
+                            立即秒杀
+                        </a>
+                        `;
+                        $("#addOrSecKill").append(tem);
                     }
                     console.log("获取到的开始时间", date)
                 }
             }
+        })
+    }
+
+    function doSecKill(skuId, token, promotionSessionId) {
+        console.log(`doSecKill`)
+        let count = $("#count").val();
+        let obj = JSON.stringify({skuId: skuId, token: token, promotionSessionId: promotionSessionId, count: count});
+        console.log(obj)
+        $.ajax({
+            url: "http://sec.gulimall.com/sec/kill",
+            type: "post",
+            dataType: "json",
+            xhrFields: {
+                withCredentials: true
+            },
+            contentType: "application/json",
+            data: obj,
+            success: function (resp) {
+                console.log("响应信息", resp)
+                if (resp != "" || resp.length != 0) {
+                    // 去订单页,不想做了,无所谓的东西
+                    location.href = "";
+                }
+            }
+        })
+    }
+
+    function addBinding() {
+        $("#addOrSecKill").on("click", "a", function () {
+            let skuId = $(this).attr("skuId");
+            let token = $(this).attr("token");
+            let promotionSessionId = $(this).attr("promotionSessionId");
+            doSecKill(skuId, token, promotionSessionId);
         })
     }
 

@@ -1,5 +1,6 @@
 package element.io.secskill;
 
+import cn.hutool.core.lang.Snowflake;
 import element.io.mall.common.to.SeckillSkuRelationTo;
 import element.io.secskill.service.SecKillService;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +38,12 @@ public class SecSkillApplicationTests {
 	public void testScan() {
 		List<SeckillSkuRelationTo> reesult = service.queryCuurentSecKillProducts();
 		log.info("最终结果{}", reesult);
+	}
+
+	public static void main(String[] args) {
+		Snowflake snowflake = new Snowflake(0, 0);
+		long id = snowflake.getGenerateDateTime(snowflake.nextId());
+		System.out.println(id);
 	}
 
 }

@@ -2,6 +2,7 @@ package element.io.mall.order.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.niezhiliang.simple.pay.dto.AlipayPcPayDTO;
+import element.io.mall.common.msg.SecKillOrderTo;
 import element.io.mall.common.to.OrderStatusTo;
 import element.io.mall.common.util.PageUtils;
 import element.io.mall.order.entity.OrderEntity;
@@ -40,6 +41,9 @@ public interface OrderService extends IService<OrderEntity> {
 
 
 	boolean updateOrderStatus(PayAsyncVo payAsyncVo);
-	
+
+
+	void saveSecKillOrder(SecKillOrderTo secKillOrderTo);
+
 }
 

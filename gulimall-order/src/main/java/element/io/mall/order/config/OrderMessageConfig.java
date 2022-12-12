@@ -66,4 +66,16 @@ public class OrderMessageConfig implements InitializingBean {
 		rabbitTemplate.setReturnCallback(new CustomReturnCallback(rabbitTemplate, redisTemplate));
 	}
 
+	@Bean
+	public Queue secKillQueue() {
+		return QueueBuilder.durable("sec.kill.queue").build();
+	}
+
+	@Bean
+	public Binding bindingSecKillQueueToOrderExchange(Queue secKillQueue, DirectExchange orderEventExchange) {
+		return BindingBuilder.bind(secKillQueue).to(orderEventExchange)
+				.with("sec.kill.order");
+	}
+	
+
 }

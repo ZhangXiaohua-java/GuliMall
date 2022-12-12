@@ -1,6 +1,7 @@
 package element.io.secskill.service;
 
 import element.io.mall.common.to.SeckillSkuRelationTo;
+import element.io.mall.common.vo.SecKillVo;
 
 import java.util.List;
 
@@ -14,5 +15,7 @@ public interface SecKillService {
 	List<SeckillSkuRelationTo> queryCuurentSecKillProducts();
 
 	SeckillSkuRelationTo isInSecKill(Long skuId);
-	
+
+	String createOrder(SecKillVo secKillVo);
+
 }

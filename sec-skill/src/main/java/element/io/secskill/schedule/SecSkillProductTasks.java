@@ -13,6 +13,7 @@ import org.redisson.api.RedissonClient;
 import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.SetOperations;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -79,29 +80,30 @@ public class SecSkillProductTasks {
 			if (Boolean.FALSE.equals(redisTemplate.hasKey(key))) {
 				ops.rightPush(key, skuIds);
 			}
+			SetOperations<String, Object> opsForSet = redisTemplate.opsForSet();
+			String orderKey = SEC_KILL_ORDER_LIST + ":" + ele.getId();
+			opsForSet.add(orderKey, -1000);
+			redisTemplate.expireAt(orderKey, ele.getEndTime());
 		});
+
 	}
 
 
 	private void saveSkus(List<SeckillSessionTo> seckillSessionTos) {
 		BoundHashOperations<String, Object, Object> ops = redisTemplate.boundHashOps(SEC_KILL_SKUS);
-		List<Long> skuIds = seckillSessionTos.stream()
-				.flatMap(e -> e.getRelations().stream())
-				.map(item -> item.getSkuId()).collect(Collectors.toList());
+		List<Long> skuIds = seckillSessionTos.stream().flatMap(e -> e.getRelations().stream()).map(item -> item.getSkuId()).collect(Collectors.toList());
 		Map<Long, SkuInfoTo> skuInfoMap = productFeignRemoteClient.batchQuerySkuInfo(skuIds);
 		// 详细信息
-		List<SeckillSkuRelationTo> list = seckillSessionTos.stream()
-				.flatMap(ele -> ele.getRelations().stream())
-				.map(element -> {
-					SkuInfoTo info = skuInfoMap.get(element.getSkuId());
-					element.setSkuInfo(info);
-					SeckillSessionTo session = seckillSessionTos.stream().filter(i -> i.getId().equals(element.getPromotionSessionId())).findAny().get();
-					element.setStart(session.getStartTime().getTime());
-					element.setEnd(session.getEndTime().getTime());
-					String uuid = CodeUtils.randomUUID();
-					element.setToken(uuid);
-					return element;
-				}).collect(Collectors.toList());
+		List<SeckillSkuRelationTo> list = seckillSessionTos.stream().flatMap(ele -> ele.getRelations().stream()).map(element -> {
+			SkuInfoTo info = skuInfoMap.get(element.getSkuId());
+			element.setSkuInfo(info);
+			SeckillSessionTo session = seckillSessionTos.stream().filter(i -> i.getId().equals(element.getPromotionSessionId())).findAny().get();
+			element.setStart(session.getStartTime().getTime());
+			element.setEnd(session.getEndTime().getTime());
+			String uuid = CodeUtils.randomUUID();
+			element.setToken(uuid);
+			return element;
+		}).collect(Collectors.toList());
 		list.stream().forEach(el -> {
 			String key = el.getPromotionSessionId().toString() + "_" + el.getSkuId();
 			if (Boolean.FALSE.equals(ops.hasKey(key))) {

@@ -32,4 +32,9 @@ public final class MQConstants {
 	public static final String SUB_STOCK_QUEUE_BINDING = "stock.sub";
 
 
+	public static final String SEC_KILL_QUEUE = "sec.kill.queue";
+
+	public static final String SEC_KILL_QUEUE_ORDER_BINDING = "sec.kill.order";
+
+	
 }
